@@ -3,6 +3,55 @@ const express = require("express");
 const router = express.Router();
 const user = require("../database/models/user"); //10
 
+router.patch("/esl_linkESL", async (req, res) => {
+  try {
+    const axios = require("axios");
+    const fs = require("fs");
+    const https = require("https");
+    const http = require("http");
+    //const { ID } = req.params;
+    //let { ID } = req.body
+    
+    var eslCode = req.body.eslCode
+    var itemid = req.body.itemid
+
+    const json = ({
+      barcode: eslCode,  
+    
+    
+    links: [
+      {
+        barcode: eslCode,
+        itemId: itemid
+        
+      }
+    ]
+      })
+
+    let result_linkESL = await axios.patch(
+      "http://192.168.101.119:3333/api/public/core/v1/labels",
+      json,
+      {
+        headers: { "Content-Type": "application/json" },
+        auth: {username: "config", password: "config"},
+      }
+    );
+
+    res.json({
+      //result_updateQty,
+      result_linkESL: result_linkESL.data,
+      api_result: constants.OK,
+      
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error,
+      api_result: constants.NOK,
+      
+    });
+  }
+});
 router.get("/Model", async (req, res) => {
   try {
     let result = await user.sequelize.query(`SELECT  distinct [Model] FROM [Control_part].[dbo].[Master_finalPart] ORDER BY [Model] `);

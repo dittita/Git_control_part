@@ -242,33 +242,51 @@ class Profile extends Component {
   };
   handleKeyDown = async (index, event, entry, num) => {
     const { inputValues } = this.state;
-    const value = event.target.value;
-
-    // Create a new object with updated values
-    let newInputValues = { ...inputValues };
-
-    // Loop through indices 9 to 13 and extract substrings
-    for (let i = 9; i <= 13; i++) {
-        newInputValues[`${index}-${i}`] = value.substring(i, i + 1); // Extracting each character
-    }
 
     // Update the state with the new input values
+    const newInputValues = {
+      ...inputValues,
+      [`${index}-${num}`]: event.target.value,
+    };
     this.setState({ inputValues: newInputValues });
 
-    if (event.key === "Enter") {
-      const value = event.target.value;
-      // console.log(`Entry ${index + 1} text ${num}:`, value, num);
-      // console.log("Entry details:", entry);
-      // console.log(entry);
+    const value = event.target.value;
 
+    if (event.key === "Enter") {
       try {
+        let result = "";
         if (num === 1) {
           // Scan label part
           const sanitizedModel = entry.model.replace(/\//g, "-");
-          const result = await httpClient.get(
-            `${server.COMPONENT_URL}/label_tray/${sanitizedModel}/${entry.vendor}/${entry.partname}/${entry.itemNumber}/${entry.mold}/${value}`
-          );
-          console.log(result);
+
+          for (let i = 9; i <= 15; i++) {
+            const substringValue = value.substring(0, i); // Extract substring from 0 to `i`
+
+            try {
+              // Make the HTTP request using the substring
+              result = await httpClient.get(
+                `${server.COMPONENT_URL}/label_tray/${sanitizedModel}/${entry.vendor}/${entry.partname}/${entry.itemNumber}/${entry.mold}/${substringValue}`
+              );
+
+              // Check the result's Model property
+              if (result.data.result[0].Model !== "") {
+                console.log("Model found, breaking the loop");
+                break; // Exit the loop if a valid Model is found
+              } else {
+                console.log(
+                  // `Model not found for substring "${substringValue}"`
+                );
+              }
+            } catch (error) {
+              // console.error( `Error occurred for substring "${substringValue}":`,error);
+              // Optionally handle the error (e.g., retry, notify the user)
+            }
+
+            // console.log(`Result for substring "${substringValue}":`, result);
+          }
+
+          // After loop, check final result
+       
           if (result.data.result[0].Model !== "") {
             this.setState((prevState) => {
               const updatedEntries = [...prevState.dataEntries];
@@ -411,21 +429,22 @@ class Profile extends Component {
     }));
     // Log the collected data
     // console.log("Collected data :", collectedData);
-   
+
     // Convert collected data to JSON format
     const jsonData = JSON.stringify(collectedData);
     console.log("jsonData data :", jsonData);
     // Loop through collected data and send PATCH requests for each entry
     collectedData.forEach(async (item) => {
       try {
-        const splittedMoNumber = item.moNumber.split('-'); // Modify the delimiter as needed
-        const response = await httpClient.patch(  // Ensure "patch" is lowercase
-    `${server.COMPONENT_URL}/esl_addItem`,  // URL
+        const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
+        const response = await httpClient.patch(
+          // Ensure "patch" is lowercase
+          `${server.COMPONENT_URL}/esl_addItem`, // URL
           {
             itemId: item.Rack_number, // Access Rack_number from each item
             properties: {
-              MO_DL: item.model,       // Access model
-              Part: item.partname,     // Access partname
+              MO_DL: item.model, // Access model
+              Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
               MO1: splittedMoNumber[0], // Access the first part of the split moNumber
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
@@ -433,13 +452,14 @@ class Profile extends Component {
           },
           {
             headers: {
-              'Content-Type': 'application/json', // Ensure content type is set to JSON
+              "Content-Type": "application/json", // Ensure content type is set to JSON
             },
           }
-      
         );
-        console.log(`PATCH response for item ${item.Rack_number}:`, response.data);
-
+        console.log(
+          `PATCH response for item ${item.Rack_number}:`,
+          response.data
+        );
       } catch (error) {
         console.error(
           `Error during PATCH request for item ${item.Rack_number}:`,
