@@ -209,6 +209,7 @@ class Profile extends Component {
       rackNumber: "",
       limit: "",
       Issue_part_KitupF4: "",
+      scannedValue:"",
     });
   };
 

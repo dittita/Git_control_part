@@ -242,10 +242,17 @@ class Profile extends Component {
   };
   handleKeyDown = async (index, event, entry, num) => {
     const { inputValues } = this.state;
-    const newInputValues = {
-      ...inputValues,
-      [`${index}-${num}`]: event.target.value,
-    };
+    const value = event.target.value;
+
+    // Create a new object with updated values
+    let newInputValues = { ...inputValues };
+
+    // Loop through indices 9 to 13 and extract substrings
+    for (let i = 9; i <= 13; i++) {
+        newInputValues[`${index}-${i}`] = value.substring(i, i + 1); // Extracting each character
+    }
+
+    // Update the state with the new input values
     this.setState({ inputValues: newInputValues });
 
     if (event.key === "Enter") {
@@ -359,7 +366,7 @@ class Profile extends Component {
                     IQC: {entry.iqcNumber || "No Model Data"} / Model:{" "}
                     {entry.model || "No Model Data"} /
                     {entry.vendor || "No Model Data"} /<span>&nbsp;&nbsp;</span>
-                    <Button variant="warning" size="s">
+                    <Button variant="primary" size="lg">
                       {entry.Rack_number || "No Rack number Data"}
                     </Button>
                   </h5>
