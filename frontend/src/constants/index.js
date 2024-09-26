@@ -97,8 +97,9 @@ TEST_PART_URL: `api/test`,
 // IMPORTMENT_DOWNTIME_DAILY_URL: `api/importment_downtime`,
 
 
-//Master 
 
+//Master 
+MASTER_COMPONENT_URL: `api/Master`,
 COMPONENT_URL: `api/component_part`,
 
 
