@@ -196,6 +196,7 @@ router.patch("/esl_addItem", async (req, res) => {
         MO_DL: properties.MO_DL,
         Part: properties.Part,
         ["MO" +number_txt] : MOnumber,
+        QTY:totalQTY,
        
       },
     };
