@@ -38,6 +38,7 @@ class Profile extends Component {
       counter: 0, // State for the counter
       isModalOpen: false, // Example modal state
       dataEntries: [], // Array to store objects of each entry
+      Number_MO:"",
     };
   }
   toggleModal = (stateKey) => {
@@ -103,11 +104,12 @@ class Profile extends Component {
                 {
                   Rack_number: result2.data.result[0].Rack_number || "",
                   ESL_number: result2.data.result[0].ESL_number || "",
+                  Number_MO : result2.data.result[0].Number || "",
                 },
                 () => {
                   // Log the updated state after it has been set
                   // console.log("Updated Rack_number:", this.state.Rack_number);
-                  // console.log("Updated ESL_number:", this.state.ESL_number);
+                  // console.log("Updated Number_MO:", this.state.Number_MO);
                   // console.log("Result2 Data:", result2);
 
                   // Call save data method
@@ -446,7 +448,7 @@ class Profile extends Component {
               MO_DL: item.model, // Access model
               Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
-              MO1: splittedMoNumber[0], // Access the first part of the split moNumber
+              ["MO" + this.state.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
             },
           },

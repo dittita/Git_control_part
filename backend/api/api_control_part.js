@@ -2,8 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const user = require("../database/models/user"); //10
-const axios = require('axios');
-const constants = require('./constants'); // Adjust the path if necessary
+const axios = require("axios");
+const constants = require("./constants"); // Adjust the path if necessary
 
 router.get("/loacation", async (req, res) => {
   try {
@@ -250,7 +250,8 @@ router.get("/loacation", async (req, res) => {
 // });
 
 //Select request component_data
-router.get("/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
+router.get(
+  "/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
   async (req, res) => {
     try {
       const { monumber, IQC_number, Part_name, Item_no } = req.params;
@@ -277,22 +278,24 @@ router.get("/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
 );
 
 //Select check
-router.get("/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
+router.get(
+  "/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
   async (req, res) => {
     try {
-      const { model, supplier, part_name, item_no, mold, labeltray } =  req.params;
+      const { model, supplier, part_name, item_no, mold, labeltray } =
+        req.params;
       // Replace "-" with "/" in the model parameter
       const sanitizedModel = model.replace(/-/g, "/");
 
       let sanitizedMold = mold === "Mix mold" ? "" : mold;
 
-      let dara = `SELECT [Model],[Qty_per_pack],[Qty_per_bundle] FROM [Control_part].[dbo].[Master_finalPart] where [Model] = '${sanitizedModel}' and [Supplier] ='${supplier}' and [Part_name] = '${part_name}' and [Part_number_Seagate] = '${labeltray}' and [Part_number_NMB] ='${item_no}'`
+      let dara = `SELECT [Model],[Qty_per_pack],[Qty_per_bundle] FROM [Control_part].[dbo].[Master_finalPart] where [Model] = '${sanitizedModel}' and [Supplier] ='${supplier}' and [Part_name] = '${part_name}' and [Part_number_Seagate] = '${labeltray}' and [Part_number_NMB] ='${item_no}'`;
       console.log(dara);
-      
+
       let result = await user.sequelize.query(
         `SELECT [Model],[Qty_per_pack],[Qty_per_bundle] FROM [Control_part].[dbo].[Master_finalPart] where [Model] = '${sanitizedModel}' and [Supplier] ='${supplier}' and [Part_name] = '${part_name}' and [Part_number_Seagate] = '${labeltray}' and [Part_number_NMB] ='${item_no}'`
       );
-     
+
       var listRawData = [];
       listRawData.push(result[0]);
 
@@ -312,22 +315,38 @@ router.get("/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
 );
 
 //Find rack number emtry
-router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
+router.get(
+  "/rack_number/:model/:supplier/:part_name/:item_no/:mold",
   async (req, res) => {
     try {
-      const { model, supplier, part_name, item_no, mold } =  req.params;
+      const { model, supplier, part_name, item_no, mold } = req.params;
       // Replace "-" with "/" in the model parameter
       const sanitizedModel = model.replace(/-/g, "/");
 
       // let sanitizedMold = mold === "Mix mold" ? "" : mold;
-      
-      
+
       let result = await user.sequelize.query(
-        `SELECT TOP(1) [ESL_number],[Rack_number] FROM [Control_part].[dbo].[Matching_rack_number]  where [Model] = '${sanitizedModel}' and [Vendor] ='${supplier}' and [Part_name] = '${part_name}'  and [Part_number] ='${item_no}' and [Mold] = '${mold}' and [Status] is null order by [ID] `
+        `SELECT TOP(1) [ESL_number],[Rack_number],[Number] FROM [Control_part].[dbo].[Matching_rack_number]  where [Model] = '${sanitizedModel}' and [Vendor] ='${supplier}' and [Part_name] = '${part_name}'  and [Part_number] ='${item_no}' and [Mold] = '${mold}' and [Status] is null order by [ID] `
       );
-     
+
       var listRawData = [];
       listRawData.push(result[0]);
+      // If a result is found, extract the required info
+      const record = result[0][0];
+      const rackNumber = record.Rack_number;
+
+      // Now, perform the UPDATE to set the Status to 'used' (or any other value)
+      await user.sequelize.query(
+        `UPDATE [Control_part].[dbo].[Matching_rack_number]
+    SET [Status] = 'used'  -- or any other value you'd like to set
+    WHERE [Rack_number] = '${rackNumber}' 
+    AND [Model] = '${sanitizedModel}' 
+    AND [Vendor] = '${supplier}' 
+    AND [Part_name] = '${part_name}' 
+    AND [Part_number] = '${item_no}' 
+    AND [Mold] = '${mold}' 
+    AND [Status] IS NULL`
+      );
 
       res.json({
         result: result[0],
@@ -345,13 +364,12 @@ router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
 );
 router.patch("/esl_addItem", async (req, res) => {
   try {
-    
-    const {itemId,properties} = req.body;
+    const { itemId, properties } = req.body;
 
     const itemDetails = {
       itemId: itemId,
       properties: {
-        MO_DL:properties.MO_DL,
+        MO_DL: properties.MO_DL,
         Part: properties.Part,
         MO1: properties.MO1,
         // MO2: "LSP002",
@@ -359,10 +377,10 @@ router.patch("/esl_addItem", async (req, res) => {
         // MO4: "EVG004",
         QTY: properties.QTY,
         // MO5: "EVG005"
-      }
+      },
     };
     console.log(itemDetails);
-    
+
     const result_addItem = await axios.patch(
       "http://192.168.101.119:3333/api/public/core/v1/items",
       itemDetails,
@@ -370,21 +388,21 @@ router.patch("/esl_addItem", async (req, res) => {
         headers: { "Content-Type": "application/json" },
         auth: {
           username: process.env.API_USERNAME || "config",
-          password: process.env.API_PASSWORD || "config"
-        }
+          password: process.env.API_PASSWORD || "config",
+        },
       }
     );
 
     console.log(result_addItem.data);
     res.json({
       result_addItem: result_addItem.data,
-      api_result: constants.OK
+      api_result: constants.OK,
     });
   } catch (error) {
-    console.error('Error occurred:', error);
+    console.error("Error occurred:", error);
     res.status(error.response ? error.response.status : 500).json({
-      error: error.message || 'An error occurred',
-      api_result: constants.NOK
+      error: error.message || "An error occurred",
+      api_result: constants.NOK,
     });
   }
 });
@@ -392,7 +410,7 @@ router.patch("/esl_addItem", async (req, res) => {
 //   try {
 //     console.log("Start");
 //     // get data and inset to data
-    
+
 //        // Create or modify itemDetails based on the incoming data
 //        const itemDetails = {
 //         itemId: "A1" || " ",  // Use incoming itemId or default value
@@ -407,7 +425,6 @@ router.patch("/esl_addItem", async (req, res) => {
 //       };
 //     console.log(itemDetails);
 
-    
 //     let result_addItem = await axios.patch(
 //       "http://192.168.101.119:3333/api/public/core/v1/items",
 //       itemDetails,
@@ -433,8 +450,5 @@ router.patch("/esl_addItem", async (req, res) => {
 //     });
 //   }
 // });
-
-
-
 
 module.exports = router;
