@@ -62,6 +62,7 @@
     "react-scripts": "^5.0.1",
     "reactstrap": "^8.10.0",
     "sass": "^1.62.1",
+    "sweetalert2": "^11.14.1",
     "url-join": "^5.0.0"
   },
   "peerDependencies": {

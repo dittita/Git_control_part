@@ -27,228 +27,6 @@ router.get("/loacation", async (req, res) => {
   }
 });
 
-// router.get("/process_mainplan", async (req, res) => {
-//   try {
-
-//     let result = await user2.query(
-//       `SELECT
-//       distinct \`Cost Center\`
-//    FROM mp_minebea_thai_2.view_requests_all
-//    ORDER BY \`Cost Center\` `,);
-
-//     var listRawData2 = [];
-//     listRawData2.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// router.get("/daily/:startDate/:finishDate", async (req, res) => {
-//   try {
-//     const { startDate, finishDate } = req.params;
-//     let result = await user1.sequelize.query(
-//       `exec [PE_maintenance].[dbo].[Downtime_daily]  '${startDate}', '${finishDate}'`);
-
-//     var listRawData2 = [];
-//     listRawData2.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       listRawData2,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// router.get("/all_report/:startDate/:finishDate/:process_pe/:line", async (req, res) => {
-//   try {
-//     let { startDate, finishDate, process_pe, line } = req.params;
-//     if (line === 'undefined') {
-//       line = '';
-//     }
-//     let result = await user2.query(
-//       `SELECT
-//       DATE_FORMAT(Created, '%Y-%m-%d') as \`Date\`,
-//       \`Equipment no.\`,
-//       Equipment,
-//       TRIM(SUBSTRING_INDEX(\`Production line\`, '_', 1))  as \`Line\`, TRIM(SUBSTRING_INDEX(\`Production line\`, '_', -1)) as \`Model\`,
-//       TRIM(SUBSTRING_INDEX(\`Technician comment\`, ']', -1))  as \`Action(Adj)\`,
-//       DATE_FORMAT(Created, '%H:%i') as \`Request time\`,
-//       DATE_FORMAT(Started, '%H:%i') as \`Start time(Adj)\`,
-//       DATE_FORMAT(Closed, '%H:%i') as \`Finished time(Adj)\`,
-//       DATE_FORMAT(TIMEDIFF(DATE_FORMAT(Started, '%Y-%m-%d %H:%i'), DATE_FORMAT(Created, '%Y-%m-%d %H:%i')), '%H:%i') AS \`Total delay\`,
-//       DATE_FORMAT(TIMEDIFF(DATE_FORMAT(Closed, '%Y-%m-%d %H:%i'), DATE_FORMAT(Started, '%Y-%m-%d %H:%i')), '%H:%i') AS \`Total downtime\`,
-//       DATE_FORMAT(TIMEDIFF(DATE_FORMAT(Closed, '%Y-%m-%d %H:%i'), DATE_FORMAT( Created, '%Y-%m-%d %H:%i')), '%H:%i') AS \`Total time\`,
-//       Author,
-//       \`Work type\`,
-//       Request,
-//       Editor as \`Worker\`,
-//       Priority,
-//       \`Request description\` as \`Cause details\`,
-//       \`Equipment type\`,
-//       Editor as \`Worker\`,
-//       Request,
-//       TRIM(REGEXP_REPLACE(\`Cost Center\`, '^[0-9]+\\.\\s*', ''))  as \`Process\`
-//    FROM mp_minebea_thai_2.view_requests_all
-//    WHERE Created between '${startDate} 07:00' and '${finishDate} 06:59'
-//      AND \`Cost Center\` like '%${process_pe}%'
-//      AND
-//       (
-//         '${line}' IS NULL OR -- Check if Line parameter is NULL
-//         '${line}' = '' OR -- Check if Line parameter is empty
-//         TRIM(SUBSTRING_INDEX(\`Production line\`, '_', 1))  = '${line}' -- Check if Line parameter matches the Line column
-//     )
-//    ORDER BY \`Equipment no.\` `,);
-
-//     var listRawData = [];
-//     listRawData.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       listRawData,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// router.get("/daily/:startDate/:finishDate/:process_pe/:line", async (req, res) => {
-//   try {
-//     let { startDate, finishDate, process_pe, line } = req.params;
-
-//     // Convert 'undefined' string to empty string
-//     if (line === 'undefined') {
-//       line = '';
-//     }
-
-//     let result = await user1.sequelize.query(
-//       `exec  [PE_maintenance].[dbo].[Downtime_daily]  '${startDate}', '${finishDate}','${process_pe}','${line}'`);
-
-//     var listRawData2 = [];
-//     listRawData2.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       listRawData2,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// router.get("/Monthly/:monthnumber/:yearnumber/:process_pe/", async (req, res) => {
-//   try {
-//     const { monthnumber, yearnumber,process_pe} = req.params;
-//     const resultGraph = await user1.sequelize.query(
-//       `exec [PE_maintenance].[dbo].[Downtime_graph_daily_test]  '${monthnumber}', '${yearnumber}','${process_pe}'`);
-//     console.log(resultGraph)
-//     const result = resultGraph;
-//       // แกน  y
-//     let Downtime = [];
-//     let Delay_Time = [];
-//     let Day_txt=[];
-//     let Total=[];
-
-//     resultGraph[0].forEach( (item) => {
-//       Downtime.push(item.Downtime);
-//       Delay_Time.push(item.Delay_Time);
-//       Day_txt.push(item.Day_txt);
-//       Total.push(item.Total);
-//     });
-//       // console.log(LAR);
-//       console.log(resultGraph[0]);
-//       console.log(Downtime);
-//       console.log(Delay_Time);
-//       console.log(Day_txt);
-
-//     var listRawData = [];
-//     listRawData.push(result[0]);
-//     res.json({
-
-//       resultGraph: resultGraph[0],
-//       result:result[0],
-//       listRawData,
-//       Downtime,
-//       Delay_Time,
-//       Day_txt,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// //Select process PE
-// router.get("/process", async (req, res) => {
-//   try {
-//     const { startDate, finishDate } = req.params;
-//     let result = await user1.sequelize.query(
-//       `SELECT distinct [Cost_cente] as 'Process' FROM [PE_maintenance].[dbo].[MaintPlan_Downtime] order by [Cost_cente] DESC`);
-
-//     var listRawData2 = [];
-//     listRawData2.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       listRawData2,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-// //Select line
-// router.get("/line/:process/", async (req, res) => {
-//   try {
-//     const { process }  = req.params;
-//     let result = await user1.sequelize.query(
-//       `SELECT distinct [Line] FROM [PE_maintenance].[dbo].[MaintPlan_Downtime] where [Cost_cente] = '${process}' order by [Line] ASC`);
-
-//     var listRawData2 = [];
-//     listRawData2.push(result[0]);
-
-//     res.json({
-//       result: result[0],
-//       listRawData2,
-//       api_result: "ok",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       error,
-//       api_result: "nok",
-//     });
-//   }
-// });
-
 //Select request component_data
 router.get(
   "/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
@@ -256,7 +34,7 @@ router.get(
     try {
       const { monumber, IQC_number, Part_name, Item_no } = req.params;
       let result = await user.sequelize.query(
-        `SELECT [Model],[Part_name] ,[Item_no] ,[Supplier]  ,[MO_number] ,[IQC_lot] ,[QTY] ,[Mold],[DateTime_KutupF4] FROM [Control_part].[dbo].[Issue_part_KitupF4] where MO_number ='${monumber}' and [IQC_lot] = '${IQC_number}' and [Part_name] = '${Part_name}' and [Item_no] = '${Item_no}'`
+        `SELECT [Model],[Part_name] ,[Item_no] ,[Supplier]  ,[MO_number] ,[IQC_lot] ,[QTY] ,[Mold],[DateTime_KutupF4]  FROM [Control_part].[dbo].[Issue_part_KitupF4] where MO_number ='${monumber}' and [IQC_lot] = '${IQC_number}' and [Part_name] = '${Part_name}' and [Item_no] = '${Item_no}'`
       );
 
       var listRawData = [];
@@ -313,6 +91,30 @@ router.get(
     }
   }
 );
+//Find rack number emtry
+router.get( "/rack_number/Clear_rack",
+  async (req, res) => {
+    try {
+   
+      // Now, perform the UPDATE to set the Status to 'used' (or any other value)
+      await user.sequelize.query(
+        `UPDATE [Control_part].[dbo].[Matching_rack_number] SET [Status] = null  WHERE [Status] = 'Wait'`
+      );
+
+      res.json({
+        // result: result[0],
+        // listRawData,
+        api_result: "ok",
+      });
+    } catch (error) {
+      console.log(error);
+      res.json({
+        error,
+        api_result: "nok",
+      });
+    }
+  }
+);
 
 //Find rack number emtry
 router.get(
@@ -326,7 +128,7 @@ router.get(
       // let sanitizedMold = mold === "Mix mold" ? "" : mold;
 
       let result = await user.sequelize.query(
-        `SELECT TOP(1) [ESL_number],[Rack_number],[Number] FROM [Control_part].[dbo].[Matching_rack_number]  where [Model] = '${sanitizedModel}' and [Vendor] ='${supplier}' and [Part_name] = '${part_name}'  and [Part_number] ='${item_no}' and [Mold] = '${mold}' and [Status] is null order by [ID] `
+        `SELECT TOP(1) [ESL_number],[Rack_number],[Number],[Model],[Vendor],[Part_name],[Part_number],[Mold] FROM [Control_part].[dbo].[Matching_rack_number]  where [Model] = '${sanitizedModel}' and [Vendor] ='${supplier}' and [Part_name] = '${part_name}'  and [Part_number] ='${item_no}' and [Mold] = '${mold}' and [Status] is null order by [ID] `
       );
 
       var listRawData = [];
@@ -334,17 +136,22 @@ router.get(
       // If a result is found, extract the required info
       const record = result[0][0];
       const rackNumber = record.Rack_number;
-
+      const ESL_number = record.ESL_number;
+      const Number = record.Number;
+      const Model = record.Model;
+      const Vendor = record.Vendor;
+      const Part_name = record.Part_name;
+      const Part_number = record.Part_number;
+      const Mold = record.Mold;
       // Now, perform the UPDATE to set the Status to 'used' (or any other value)
       await user.sequelize.query(
-        `UPDATE [Control_part].[dbo].[Matching_rack_number]
-    SET [Status] = 'used'  -- or any other value you'd like to set
-    WHERE [Rack_number] = '${rackNumber}' 
-    AND [Model] = '${sanitizedModel}' 
-    AND [Vendor] = '${supplier}' 
-    AND [Part_name] = '${part_name}' 
-    AND [Part_number] = '${item_no}' 
-    AND [Mold] = '${mold}' 
+        `UPDATE [Control_part].[dbo].[Matching_rack_number] SET [Status] = 'Wait'  WHERE [Rack_number] = '${rackNumber}' 
+   AND [Number] = '${Number}'
+    AND [Model] = '${Model}' 
+    AND [Vendor] = '${Vendor}' 
+    AND [Part_name] = '${Part_name}' 
+    AND [Part_number] = '${Part_number}' 
+    AND [Mold] = '${Mold}' 
     AND [Status] IS NULL`
       );
 
@@ -366,19 +173,35 @@ router.patch("/esl_addItem", async (req, res) => {
   try {
     const { itemId, properties } = req.body;
 
+    let result = await user.sequelize.query(
+      `SELECT [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number],COALESCE(SUM([QTY]),0)  as [QTY] FROM [Control_part].[dbo].[Matching_rack_number] where [Rack_number] = '${itemId}' group by [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number]`
+    );
+    const record = result[0][0];
+    console.log(result);
+    // Ensure properties.QTY and record.QTY are converted to integers
+    const qtyFromProperties = parseInt(properties.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
+    const qtyFromRecord = parseInt(record.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
+  console.log(properties);
+    // Calculate totalQTY as an integer
+    const totalQTY = qtyFromProperties + qtyFromRecord;
+    const MO1_txt = properties.MO1 ||""
+    const MO2_txt  = properties.MO2 ||""
+    const MO3_txt  = properties.MO3 ||""
+    const MOnumber = [MO1_txt, MO2_txt, MO3_txt].filter(Boolean).join("-");
+    const number_txt  = properties.Number ||""
+    const iqcNumber= properties.iqcNumber ||""
     const itemDetails = {
       itemId: itemId,
       properties: {
         MO_DL: properties.MO_DL,
         Part: properties.Part,
-        MO1: properties.MO1,
-        // MO2: "LSP002",
-        // MO3: "XXXXXXx",
-        // MO4: "EVG004",
-        QTY: properties.QTY,
-        // MO5: "EVG005"
+        MO1: MO1_txt,
+        MO2: MO2_txt,
+        MO3: MO3_txt,
+        QTY: totalQTY,
       },
     };
+    
     console.log(itemDetails);
 
     const result_addItem = await axios.patch(
@@ -393,7 +216,12 @@ router.patch("/esl_addItem", async (req, res) => {
       }
     );
 
-    console.log(result_addItem.data);
+    // console.log(result_addItem.data);
+
+    let result_update = await user.sequelize.query(
+      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful',[Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${totalQTY}' where [Rack_number] = '${itemId}' and [Status] = 'Wait' and Number = '${number_txt}'`
+    );
+
     res.json({
       result_addItem: result_addItem.data,
       api_result: constants.OK,

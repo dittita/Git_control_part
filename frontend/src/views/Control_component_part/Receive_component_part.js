@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { server } from "constants";
 import { httpClient } from "utils/HttpClient.js";
+import Swal from 'sweetalert2';
 // import axios from 'axios';
 
 // reactstrap components
@@ -87,6 +88,7 @@ class Profile extends Component {
             mold: result.data.result[0].Mold || "",
             Issue_part_KitupF4: result.data.result[0].DateTime_KutupF4 || "",
             scannedValue: "", // Clear the input value immediately
+      
           },
           async () => {
             // This callback is called after the state has been updated
@@ -143,6 +145,7 @@ class Profile extends Component {
       Issue_part_KitupF4,
       Rack_number,
       ESL_number,
+      Number_MO,
     } = this.state;
 
     const newDataEntry = {
@@ -158,6 +161,7 @@ class Profile extends Component {
       Issue_part_KitupF4,
       Rack_number,
       ESL_number,
+      Number_MO,
     };
 
     this.setState((prevState) => ({
@@ -171,7 +175,7 @@ class Profile extends Component {
       counter: 0, // Optionally reset the counter if needed
     });
   };
-  clearInput = () => {
+  clearInput = async () => {
     this.setState({
       moNumber: "",
       model: "",
@@ -184,8 +188,24 @@ class Profile extends Component {
       partname: "",
       Issue_part_KitupF4: "",
       counter: 0,
+      Number_MO:"",
     });
     this.clearDataEntries();
+
+     // Fetch additional data based on the updated state
+  try {
+    
+    await httpClient.get(
+      `${server.COMPONENT_URL}/rack_number/Clear_rack`
+    );
+
+    // Process the result if needed
+    // console.log(result2.data);
+    // You can update state with the result if necessary
+    // this.setState({ someStateField: result2.data });
+  } catch (error) {
+    // console.error("Error fetching additional data:", error);
+  }
   };
 
   // report with select model,date,type
@@ -439,6 +459,8 @@ class Profile extends Component {
     collectedData.forEach(async (item) => {
       try {
         const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
+        console.log(item);
+
         const response = await httpClient.patch(
           // Ensure "patch" is lowercase
           `${server.COMPONENT_URL}/esl_addItem`, // URL
@@ -448,7 +470,9 @@ class Profile extends Component {
               MO_DL: item.model, // Access model
               Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
-              ["MO" + this.state.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
+              ["MO" + item.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
+              Number:  item.Number_MO,
+              iqcNumber:item.iqcNumber,
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
             },
           },
@@ -457,18 +481,36 @@ class Profile extends Component {
               "Content-Type": "application/json", // Ensure content type is set to JSON
             },
           }
-        );
+      
+        
+          );
         console.log(
           `PATCH response for item ${item.Rack_number}:`,
           response.data
         );
+        this.clearInput();
+          // Define the action to take when the button is clicked
+          Swal.fire({
+            icon: "success",
+            title: "Good job!",
+            text: 'Ok, Got it!',
+            confirmButtonText: 'Close'
+        });
+
       } catch (error) {
         console.error(
           `Error during PATCH request for item ${item.Rack_number}:`,
           error
         );
+        Swal.fire({
+          title: 'Error!',
+          icon: 'error',
+          text: 'Ok, Got it!',
+          confirmButtonText: 'Close'
+      });
       }
     });
+   
   };
 
   render() {
