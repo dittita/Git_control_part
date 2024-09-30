@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { server } from "constants";
 import { httpClient } from "utils/HttpClient.js";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 // import axios from 'axios';
 
 // reactstrap components
@@ -39,7 +39,7 @@ class Profile extends Component {
       counter: 0, // State for the counter
       isModalOpen: false, // Example modal state
       dataEntries: [], // Array to store objects of each entry
-      Number_MO:"",
+      Number_MO: "",
     };
   }
   toggleModal = (stateKey) => {
@@ -88,36 +88,41 @@ class Profile extends Component {
             mold: result.data.result[0].Mold || "",
             Issue_part_KitupF4: result.data.result[0].DateTime_KutupF4 || "",
             scannedValue: "", // Clear the input value immediately
-      
           },
           async () => {
             // This callback is called after the state has been updated
             try {
               // Sanitize model for URL
               const sanitizedModel = this.state.model.replace(/\//g, "-");
-
-              // Fetch additional data based on the updated state
-              const result2 = await httpClient.get(
-                `${server.COMPONENT_URL}/rack_number/${sanitizedModel}/${this.state.vendor}/${this.state.partname}/${this.state.itemNumber}/${this.state.mold}`
+              const result5 = await httpClient.get(
+                `${server.COMPONENT_URL}/check_duplicate/${sanitizedModel}/${this.state.vendor}/${this.state.partname}/${this.state.itemNumber}/${this.state.mold}/${moNumber}/${iqcNumber}`
               );
+              // console.log(result5.data.result[0].Status);
+              // Call save data method
+              if (result5.data.result[0].Status === "KitupCR") {
+                // Fetch additional data based on the updated state
+                const result2 = await httpClient.get(
+                  `${server.COMPONENT_URL}/rack_number/${sanitizedModel}/${this.state.vendor}/${this.state.partname}/${this.state.itemNumber}/${this.state.mold}`
+                );
 
-              // Update the state with the fetched data and log the updated state
-              this.setState(
-                {
-                  Rack_number: result2.data.result[0].Rack_number || "",
-                  ESL_number: result2.data.result[0].ESL_number || "",
-                  Number_MO : result2.data.result[0].Number || "",
-                },
-                () => {
-                  // Log the updated state after it has been set
-                  // console.log("Updated Rack_number:", this.state.Rack_number);
-                  // console.log("Updated Number_MO:", this.state.Number_MO);
-                  // console.log("Result2 Data:", result2);
-
-                  // Call save data method
-                  this.handleSaveData();
-                }
-              );
+                // Update the state with the fetched data and log the updated state
+                this.setState(
+                  {
+                    Rack_number: result2.data.result[0].Rack_number || "",
+                    ESL_number: result2.data.result[0].ESL_number || "",
+                    Number_MO: result2.data.result[0].Number || "",
+                  },
+                  () => {
+                    // Log the updated state after it has been set
+                    // console.log("Updated Rack_number:", this.state.Rack_number);
+                    // console.log("Updated Number_MO:", this.state.Number_MO);
+                    // console.log("Result2 Data:", result2);
+                    this.handleSaveData();
+                  }
+                );
+              } else {
+                alert("Duplicate found! คุณเคยรับงานนี้ไปแล้วค่ะ  ");
+              }
             } catch (error) {
               alert(
                 "No data for master number rack. Please input it into the master! \n(ไม่มีข้อมูลในการบันทึกเลขชั้นวาง กรุณาทำการตั้งหมายเลขชั้นวางก่อน!)"
@@ -188,24 +193,21 @@ class Profile extends Component {
       partname: "",
       Issue_part_KitupF4: "",
       counter: 0,
-      Number_MO:"",
+      Number_MO: "",
     });
     this.clearDataEntries();
 
-     // Fetch additional data based on the updated state
-  try {
-    
-    await httpClient.get(
-      `${server.COMPONENT_URL}/rack_number/Clear_rack`
-    );
+    // Fetch additional data based on the updated state
+    try {
+      await httpClient.get(`${server.COMPONENT_URL}/rack_number/Clear_rack`);
 
-    // Process the result if needed
-    // console.log(result2.data);
-    // You can update state with the result if necessary
-    // this.setState({ someStateField: result2.data });
-  } catch (error) {
-    // console.error("Error fetching additional data:", error);
-  }
+      // Process the result if needed
+      // console.log(result2.data);
+      // You can update state with the result if necessary
+      // this.setState({ someStateField: result2.data });
+    } catch (error) {
+      // console.error("Error fetching additional data:", error);
+    }
   };
 
   // report with select model,date,type
@@ -295,9 +297,10 @@ class Profile extends Component {
                 console.log("Model found, breaking the loop");
                 break; // Exit the loop if a valid Model is found
               } else {
-                console.log(
+                console
+                  .log
                   // `Model not found for substring "${substringValue}"`
-                );
+                  ();
               }
             } catch (error) {
               // console.error( `Error occurred for substring "${substringValue}":`,error);
@@ -308,7 +311,7 @@ class Profile extends Component {
           }
 
           // After loop, check final result
-       
+
           if (result.data.result[0].Model !== "") {
             this.setState((prevState) => {
               const updatedEntries = [...prevState.dataEntries];
@@ -468,11 +471,12 @@ class Profile extends Component {
             itemId: item.Rack_number, // Access Rack_number from each item
             properties: {
               MO_DL: item.model, // Access model
+              vendor:item.vendor,
               Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
               ["MO" + item.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
-              Number:  item.Number_MO,
-              iqcNumber:item.iqcNumber,
+              Number: item.Number_MO,
+              iqcNumber: item.iqcNumber,
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
             },
           },
@@ -481,36 +485,32 @@ class Profile extends Component {
               "Content-Type": "application/json", // Ensure content type is set to JSON
             },
           }
-      
-        
-          );
+        );
         console.log(
           `PATCH response for item ${item.Rack_number}:`,
           response.data
         );
         this.clearInput();
-          // Define the action to take when the button is clicked
-          Swal.fire({
-            icon: "success",
-            title: "Good job!",
-            text: 'Ok, Got it!',
-            confirmButtonText: 'Close'
+        // Define the action to take when the button is clicked
+        Swal.fire({
+          icon: "success",
+          title: "Good job!",
+          text: "Ok, Got it!",
+          confirmButtonText: "Close",
         });
-
       } catch (error) {
         console.error(
           `Error during PATCH request for item ${item.Rack_number}:`,
           error
         );
         Swal.fire({
-          title: 'Error!',
-          icon: 'error',
-          text: 'Ok, Got it!',
-          confirmButtonText: 'Close'
-      });
+          title: "Error!",
+          icon: "error",
+          text: "Ok, Got it!",
+          confirmButtonText: "Close",
+        });
       }
     });
-   
   };
 
   render() {
