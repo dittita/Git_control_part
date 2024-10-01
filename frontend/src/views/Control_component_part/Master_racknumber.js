@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import Swal from "sweetalert2";
 import { server } from "constants";
 import { httpClient } from "utils/HttpClient.js";
 // import { ProductService } from './service/ProductService';
@@ -209,7 +209,7 @@ class Profile extends Component {
       rackNumber: "",
       limit: "",
       Issue_part_KitupF4: "",
-      scannedValue:"",
+      scannedValue: "",
     });
   };
 
@@ -238,95 +238,96 @@ class Profile extends Component {
       console.error("Error fetching data:", error);
     }
   };
-// Method to handle delete action
-handleDelete = async (ID) => {
-  try {
-    // Send a DELETE request to your backend
-    await httpClient.delete(`${server.MASTER_COMPONENT_URL}/delete-data/${ID}`);
-    // console.log(result);
-    // Optionally, refresh the data after deletion
-    this.doGetDataReport();
+  // Method to handle delete action
+  handleDelete = async (ID) => {
+    try {
+      // Send a DELETE request to your backend
+      await httpClient.delete(
+        `${server.MASTER_COMPONENT_URL}/delete-data/${ID}`
+      );
+      // console.log(result);
+      // Optionally, refresh the data after deletion
+      this.doGetDataReport();
 
-    alert(`Record with ESL number ${ID} deleted successfully!`);
-  } catch (error) {
-    console.error('Error deleting data:', error);
-    alert(`Error deleting data: ${error.message}`);
-  }
-};
+      alert(`Record with ESL number ${ID} deleted successfully!`);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      alert(`Error deleting data: ${error.message}`);
+    }
+  };
 
   // Render method to display the table
 
-renderTable = () => {
-  const { Raw_Dat } = this.state;
+  renderTable = () => {
+    const { Raw_Dat } = this.state;
 
-  // Check if Raw_Dat contains data
-  if (Raw_Dat.length === 0) {
-    return <p>No data available</p>;
-  }
+    // Check if Raw_Dat contains data
+    if (Raw_Dat.length === 0) {
+      return <p>No data available</p>;
+    }
 
-  return (
-    <div className="content">
-      <div className="container-fluid">
-        <div className="card card-primary">
-          <div className="row"></div>
-          <div className="col-12">
-            <div
-              className="card-body table-responsive p-0"
-              style={{ height: "100%" }}
-            >
-              <table
-                className="table table-head-fixed text-nowrap table-hover"
-                style={{ width: "100%", borderCollapse: "collapse" }}
+    return (
+      <div className="content">
+        <div className="container-fluid">
+          <div className="card card-primary">
+            <div className="row"></div>
+            <div className="col-12">
+              <div
+                className="card-body table-responsive p-0"
+                style={{ height: "100%" }}
               >
-                <thead>
-                  <tr align="center">
-                  <th style={styles.headerCell}>Actions</th> {/* New Actions column */}
-                    <th style={styles.headerCell}>ESL_number</th>
-                    <th style={styles.headerCell}>Part_number</th>
-                    <th style={styles.headerCell}>Model</th>
-                    <th style={styles.headerCell}>Mold</th>
-                    <th style={styles.headerCell}>Part_name</th>
-                    <th style={styles.headerCell}>Vendor</th>
-                    <th style={styles.headerCell}>Updater</th>
-                    <th style={styles.headerCell}>Rack_number</th>
-                    <th style={styles.headerCell}>QTY</th>
-                    <th style={styles.headerCell}>ID</th>
-                  
-                  </tr>
-                </thead>
-                <tbody>
-                  {Raw_Dat.map((item, index) => (
-                    <tr key={index}>
-                       <td style={styles.cell}>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => this.handleDelete(item.ID)} // Pass ESL_number to delete
-                        >
-                          Delete
-                        </button>
-                      </td>
-                      <td style={styles.cell}>{item.ESL_number}</td>
-                      <td style={styles.cell}>{item.Part_number}</td>
-                      <td style={styles.cell}>{item.Model}</td>
-                      <td style={styles.cell}>{item.Mold}</td>
-                      <td style={styles.cell}>{item.Part_name}</td>
-                      <td style={styles.cell}>{item.Vendor}</td>
-                      <td style={styles.cell}>{item.Updater}</td>
-                      <td style={styles.cell}>{item.Rack_number}</td>
-                      <td style={styles.cell}>{item.QTY}</td>
-                      <td style={styles.cell}>{item.ID}</td>
-                     
+                <table
+                  className="table table-head-fixed text-nowrap table-hover"
+                  style={{ width: "100%", borderCollapse: "collapse" }}
+                >
+                  <thead>
+                    <tr align="center">
+                      <th style={styles.headerCell}>Actions</th>{" "}
+                      {/* New Actions column */}
+                      <th style={styles.headerCell}>ESL_number</th>
+                      <th style={styles.headerCell}>Part_number</th>
+                      <th style={styles.headerCell}>Model</th>
+                      <th style={styles.headerCell}>Mold</th>
+                      <th style={styles.headerCell}>Part_name</th>
+                      <th style={styles.headerCell}>Vendor</th>
+                      <th style={styles.headerCell}>Updater</th>
+                      <th style={styles.headerCell}>Rack_number</th>
+                      <th style={styles.headerCell}>QTY</th>
+                      <th style={styles.headerCell}>ID</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {Raw_Dat.map((item, index) => (
+                      <tr key={index}>
+                        <td style={styles.cell}>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => this.handleDelete(item.ID)} // Pass ESL_number to delete
+                          >
+                            Delete
+                          </button>
+                        </td>
+                        <td style={styles.cell}>{item.ESL_number}</td>
+                        <td style={styles.cell}>{item.Part_number}</td>
+                        <td style={styles.cell}>{item.Model}</td>
+                        <td style={styles.cell}>{item.Mold}</td>
+                        <td style={styles.cell}>{item.Part_name}</td>
+                        <td style={styles.cell}>{item.Vendor}</td>
+                        <td style={styles.cell}>{item.Updater}</td>
+                        <td style={styles.cell}>{item.Rack_number}</td>
+                        <td style={styles.cell}>{item.QTY}</td>
+                        <td style={styles.cell}>{item.ID}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
   formatDate = (date) => {
     const year = date.getFullYear();
@@ -356,13 +357,20 @@ renderTable = () => {
         limit,
       } = this.state;
 
-      
-
-      // console.log("Data being sent to the server:", data); // Debugging log
-  //  console.log(limit);
+      // const data = {
+      //   ESL_barcode: scannedValue, // Ensure this is set
+      //   Part_number: selectedpart_numbers,
+      //   Model: selectedModel,
+      //   Part_name: selectedpartname,
+      //   Vendor: selectevendor,
+      //   Mold: selectemold,
+      //   Rack_number: rackNumber, // Check the correct case here
+      //   Updater: "T7436",
+      //   Timestamp: timenow, // Ensure this is correctly formatted
+      // };
+    
       try {
         for (let i = 1; i <= limit; i++) {
-
           const data = {
             ESL_number: scannedValue, // Ensure this is set
             Part_number: selectedpart_numbers,
@@ -373,7 +381,7 @@ renderTable = () => {
             Rack_number: rackNumber, // Check the correct case here
             Updater: "T7436",
             Timestamp: timenow, // Ensure this is correctly formatted
-            Number_limit:i,
+            Number_limit: i,
           };
 
           const response = await httpClient.post(
@@ -382,7 +390,14 @@ renderTable = () => {
           );
 
           console.log("Response:", response.data); // Log the response from the server
-          alert(`Rack number ${data.Rack_number} inserted successfully!`);
+          Swal.fire({
+            icon: "success",
+            title: `Rack number ${data.Rack_number} inserted successfully!`,
+            text: "Ok, Got it!",
+            confirmButtonText: "Close",
+          });
+          
+          // alert();
         }
         // Clear input fields
         this.clearInput();
@@ -390,15 +405,63 @@ renderTable = () => {
       } catch (error) {
         console.error("Error inserting data:", error);
         if (error.response && error.response.status === 500) {
-          alert("Server error (500): Internal server issue.");
+          
+          Swal.fire({
+            title: "Error!",
+            icon: "Server error (500): Internal server issue.",
+            text: "Ok, Got it!",
+            confirmButtonText: "Close",
+          });
         } else if (error.response) {
-          alert(
-            `Error inserting data: ${error.response.status} - ${error.response.statusText}`
-          );
+         
+          Swal.fire({
+            title: "Error!",
+            icon:  `Error inserting data: ${error.response.status} - ${error.response.statusText}`,
+            text: "Ok, Got it!",
+            confirmButtonText: "Close",
+          });
         } else {
-          alert(`Error inserting data: ${error.message}`);
+          Swal.fire({
+            title: "Error!",
+            icon: `Error inserting data: ${error.message}`,
+            text: "Ok, Got it!",
+            confirmButtonText: "Close",
+          });
+          
         }
+      }  try {
+        const splittedModel = selectedModel.split("-"); // Modify the delimiter as needed
+        const response = await httpClient.patch(
+          // Ensure "patch" is lowercase
+          `${server.MASTER_COMPONENT_URL}/esl_linkESL`, // URL
+          {
+            barcode: scannedValue, // Access Rack_number from each item
+            properties: {
+              barcode: scannedValue,
+              MO_DL: selectedModel,
+              Part: selectedpartname,
+              PART_NO: selectedpart_numbers,
+              Vendor: selectevendor,
+              itemId: rackNumber,
+              ITEMIPF: "Tag2",
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json", // Ensure content type is set to JSON
+            },
+          }
+          
+        );
+        console.log("API1"+response);
+        console.log(`PATCH response for item ${rackNumber}:`, response.data);
+      } catch (error) {
+        console.error(
+          `Error during PATCH request for item ${rackNumber}:`,
+          error
+        );
       }
+
     });
   };
 

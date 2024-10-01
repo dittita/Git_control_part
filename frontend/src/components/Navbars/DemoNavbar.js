@@ -111,7 +111,7 @@ class DemoNavbar extends React.Component {
                 <Nav className="navbar-nav-hover align-items-lg-center" navbar>
                   <UncontrolledDropdown nav>
                     <DropdownToggle nav>
-                      <i className="ni ni-ui-04 d-lg-none mr-1" />
+                      {/* <i className="ni ni-ui-04 d-lg-none mr-1" /> */}
                       <span className="nav-link-inner--text">Components</span>
                     </DropdownToggle>
                     <DropdownMenu className="dropdown-menu-xl">
@@ -174,6 +174,10 @@ class DemoNavbar extends React.Component {
                     </DropdownMenu>
                   </UncontrolledDropdown>
              
+
+
+
+             
                   <UncontrolledDropdown nav>
                     <DropdownToggle nav>
                       <i className="ni ni-collection d-lg-none mr-1" />
@@ -181,7 +185,15 @@ class DemoNavbar extends React.Component {
                     </DropdownToggle>
                     <DropdownMenu>
                       <DropdownItem to="/racknumber" tag={Link}>
-                        Rack number
+                        
+                      <Media body className="ml-3">
+                 
+                            <h6 className="heading text-primary mb-md-1">
+                            Rack number
+                            </h6>
+                          
+                          </Media>
+                       
                       </DropdownItem>
                       <DropdownItem to="/profile-page" tag={Link}>
                         Component part
@@ -196,10 +208,15 @@ class DemoNavbar extends React.Component {
                     </DropdownToggle>
                     <DropdownMenu>
                       <DropdownItem to="/Receive-page" tag={Link}>
-                        Receiving Parts
+                      <h6 className="heading text-primary mb-md-1">
+                      Receiving Parts
+                            </h6> 
                       </DropdownItem>
-                      <DropdownItem to="/profile-page" tag={Link}>
-                        Issue component part 
+                      <DropdownItem to="/Issue-page" tag={Link}>
+                      <h6 className="heading text-info mb-md-1">
+                      Issue component part 
+                            </h6> 
+                      
                       </DropdownItem>
                   
                     </DropdownMenu>

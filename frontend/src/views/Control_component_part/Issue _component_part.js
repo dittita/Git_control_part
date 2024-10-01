@@ -38,6 +38,7 @@ class Profile extends Component {
       counter: 0, // State for the counter
       isModalOpen: false, // Example modal state
       dataEntries: [], // Array to store objects of each entry
+      Raw_Dat: [],
     };
   }
   toggleModal = (stateKey) => {
@@ -196,26 +197,8 @@ class Profile extends Component {
     //   }
   };
 
-  // // report with select model,date,type
-  // doGetDatatextbox = async () => {
-  //   try {
-  //     const result = await httpClient.get(
-  //       `${server.COMPONENT_URL}/label_tray/${sanitizedModel}/${entry.vendor}/${entry.partname}/${entry.itemNumber}/${entry.mold}/${value}`);
-
-  //     console.log(result);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
-
   componentDidMount() {
-    //   // Define an async function and call it
-    //   //  (async () => {
-    //   //   await this.doGetDataReport();
-    //   // })();
-    //   // document.documentElement.scrollTop = 0;
-    //   // document.scrollingElement.scrollTop = 0;
-    //   // this.refs.main.scrollTop = 0;
+    this.fetchData();
   }
 
   handleInputChange = (index, event) => {
@@ -306,9 +289,6 @@ class Profile extends Component {
     }
   };
 
-  // componentDidMount() {
-
-  // }
   renderDataEntries = () => {
     return (
       <div>
@@ -394,52 +374,94 @@ class Profile extends Component {
     );
   };
 
-  handleClick_els = async () => {
-    const { inputValues, dataEntries } = this.state;
-    // Collect data from the input fields
-    const collectedData = dataEntries.map((entry, index) => ({
-      ...entry,
-      labelPartValue: inputValues[`${index}-1`] || "", // Value from label part textbox
-      eslTagValue: inputValues[`${index}-2`] || "", // Value from ESL Tag textbox
-    }));
-    // Log the collected data
-    // console.log("Collected data :", collectedData);
-   
-    // Convert collected data to JSON format
-    const jsonData = JSON.stringify(collectedData);
-    console.log("jsonData data :", jsonData);
-    // Loop through collected data and send PATCH requests for each entry
-    collectedData.forEach(async (item) => {
-      try {
-        const splittedMoNumber = item.moNumber.split('-'); // Modify the delimiter as needed
-        const response = await httpClient.patch(  // Ensure "patch" is lowercase
-    `${server.COMPONENT_URL}/esl_addItem`,  // URL
-          {
-            itemId: item.Rack_number, // Access Rack_number from each item
-            properties: {
-              MO_DL: item.model,       // Access model
-              Part: item.partname,     // Access partname
-              QTY: item.qty, // Access the first part of the split moNumber
-              MO1: splittedMoNumber[0], // Access the first part of the split moNumber
-              // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
-            },
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json', // Ensure content type is set to JSON
-            },
-          }
-      
-        );
-        console.log(`PATCH response for item ${item.Rack_number}:`, response.data);
+  fetchData = async () => {
+    try {
+      const result = await httpClient.get(
+        server.ISUUEPART_URL + "/Data_racknumber"
+      );
+      // console.log(result);
+      this.setState({ Raw_Dat: result.data.result }); // result.data should be an array
+      //  console.log(result);
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+  };
 
-      } catch (error) {
-        console.error(
-          `Error during PATCH request for item ${item.Rack_number}:`,
-          error
-        );
-      }
-    });
+  handleDelete = (id) => {
+    // Add logic to delete an item by its ID from the database
+    console.log("Delete item with ID:", id);
+  };
+  renderTable = () => {
+    const { Raw_Dat } = this.state;
+
+    if (!Array.isArray(Raw_Dat) || Raw_Dat.length === 0) {
+      return <p>No data available</p>;
+    }
+
+    return (
+      <div className="content">
+        <div className="container-fluid">
+          <div className="card card-primary">
+            <div className="row"></div>
+            <div className="col-12">
+              <div
+                className="card-body table-responsive p-0"
+                style={{ height: "100%" }}
+              >
+                <table
+                  className="table table-head-fixed text-nowrap table-hover"
+                  style={{ width: "100%", borderCollapse: "collapse" }}
+                >
+                  <thead>
+                    <tr align="center">
+                      {/* <th style={styles.headerCell}>Actions</th> */}
+                      <th style={styles.headerCell}>ESL_number</th>
+                      <th style={styles.headerCell}>Part_number</th>
+                      <th style={styles.headerCell}>Model</th>
+                      <th style={styles.headerCell}>Part_name</th>
+                      <th style={styles.headerCell}>Vendor</th>
+                      <th style={styles.headerCell}>Mold</th>
+                      <th style={styles.headerCell}>Mo_number</th>
+                      <th style={styles.headerCell}>IQC_number</th>
+                      <th style={styles.headerCell}>Updater</th>
+                      <th style={styles.headerCell}>Rack_number</th>
+                      <th style={styles.headerCell}>QTY</th>
+                      <th style={styles.headerCell}>ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Raw_Dat.map((item, index) => (
+                      <tr key={index}>
+                        {/* <td style={styles.cell}>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => this.handleDelete(item.ID)}
+                          >
+                            Delete
+                          </button>
+                        </td> */}
+                        <td style={styles.cell}>{item.ESL_number}</td>
+                        <td style={styles.cell}>{item.Part_number}</td>
+                        <td style={styles.cell}>{item.Model}</td>
+                        <td style={styles.cell}>{item.Part_name}</td>
+                        <td style={styles.cell}>{item.Vendor}</td>
+                        <td style={styles.cell}>{item.Mold}</td>
+                        <td style={styles.cell}>{item.Mo_number}</td>
+                        <td style={styles.cell}>{item.IQC_number}</td>
+                        <td style={styles.cell}>{item.Updater}</td>
+                        <td style={styles.cell}>{item.Rack_number}</td>
+                        <td style={styles.cell}>{item.QTY}</td>
+                        <td style={styles.cell}>{item.ID}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   render() {
@@ -463,7 +485,7 @@ class Profile extends Component {
         <main className="profile-page" ref="main">
           <section className="section-profile-cover section-shaped my-0">
             {/* Circles background */}
-            <div className="shape shape-style-1 shape-default alpha-4" >
+            <div className="shape shape-style-1 shape-default alpha-4">
               <span />
               <span />
               <span />
@@ -554,16 +576,21 @@ class Profile extends Component {
                     </Col>
                   </Row>
                   <div className="text-center mt-5">
-                    <h3>Receive component part</h3>
+                    <h3>Issue component part</h3>
                     <div
                       className="h6 font-weight-300"
                       style={{ fontSize: "18px" }}
                     >
-                      <i className="ni location_pin mr-2" />
                       Please scan the QR code for the MO number.
+                      <div className="mt-5 py-5 border-top text-center">
+                        <Row className="justify-content-center">
+                          <Col lg="9"></Col>
+                        </Row>
+                        <div> {this.renderTable()} </div>
+                      </div>
                     </div>
 
-                    <FormGroup>
+                    {/* <FormGroup>
                       <Input
                         className="form-control-alternative"
                         placeholder="Please scan the QR code"
@@ -670,7 +697,7 @@ class Profile extends Component {
                         value={Issue_part_KitupF4}
                         style={{ fontSize: "19px", width: "450px" }}
                       />
-                    </FormGroup>
+                    </FormGroup> */}
 
                     <br></br>
                     <br></br>
@@ -824,5 +851,21 @@ class Profile extends Component {
     );
   }
 }
-
+// Styling for table cells and headers
+// const styles = {
+//   headerCell: { backgroundColor: "#f8f9fa", fontWeight: "bold" },
+//   cell: { padding: "8px", textAlign: "center", border: "1px solid #ddd" },
+// };
+const styles = {
+  headerCell: {
+    borderBottom: "2px solid black",
+    textAlign: "left",
+    padding: "9px",
+    backgroundColor: "#f2f2f2",
+  },
+  cell: {
+    borderBottom: "1px solid #ddd",
+    padding: "8px",
+  },
+};
 export default Profile;
