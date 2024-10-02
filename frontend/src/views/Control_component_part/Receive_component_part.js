@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 // reactstrap components
 import {
-  Modal,
+  Modal, 
   Button,
   Card,
   Container,

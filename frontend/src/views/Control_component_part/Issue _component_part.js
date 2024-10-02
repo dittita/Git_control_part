@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { server } from "constants";
 import { httpClient } from "utils/HttpClient.js";
+import Checkbox from '@mui/material/Checkbox'; // After installing MUI
+
 // import axios from 'axios';
 
 // reactstrap components
@@ -394,16 +396,16 @@ class Profile extends Component {
   };
   renderTable = () => {
     const { Raw_Dat, searchQuery } = this.state;
-  
+
     // Filter Raw_Dat based on the search query
-    const filteredData = Raw_Dat.filter(item =>
+    const filteredData = Raw_Dat.filter((item) =>
       item.Part_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+
     if (!Array.isArray(filteredData) || filteredData.length === 0) {
       return <p>No data available</p>;
     }
-  
+
     return (
       <div className="content">
         <div className="container-fluid">
@@ -420,15 +422,16 @@ class Profile extends Component {
                 >
                   <thead>
                     <tr align="center">
+                      <th style={styles.headerCell}>Actions</th>{" "}
+                      <th style={styles.headerCell}>Rack_number</th>
+                      <th style={styles.headerCell}>Mo_number</th>
+                      <th style={styles.headerCell}>IQC_number</th>
                       <th style={styles.headerCell}>Part_number</th>
                       <th style={styles.headerCell}>Model</th>
                       <th style={styles.headerCell}>Part_name</th>
                       <th style={styles.headerCell}>Vendor</th>
                       <th style={styles.headerCell}>Mold</th>
-                      <th style={styles.headerCell}>Mo_number</th>
-                      <th style={styles.headerCell}>IQC_number</th>
                       <th style={styles.headerCell}>Updater</th>
-                      <th style={styles.headerCell}>Rack_number</th>
                       <th style={styles.headerCell}>QTY</th>
                       <th style={styles.headerCell}>ID</th>
                     </tr>
@@ -436,15 +439,20 @@ class Profile extends Component {
                   <tbody>
                     {filteredData.map((item, index) => (
                       <tr key={index}>
+                        // In your JSX
+                        <Checkbox
+                          checked={selectedItems.includes(item.ID)}
+                          onChange={() => toggleSelect(item.ID)}
+                        />
+                        <td style={styles.cell}>{item.Rack_number}</td>
+                        <td style={styles.cell}>{item.Mo_number}</td>
+                        <td style={styles.cell}>{item.IQC_number}</td>
                         <td style={styles.cell}>{item.Part_number}</td>
                         <td style={styles.cell}>{item.Model}</td>
                         <td style={styles.cell}>{item.Part_name}</td>
                         <td style={styles.cell}>{item.Vendor}</td>
                         <td style={styles.cell}>{item.Mold}</td>
-                        <td style={styles.cell}>{item.Mo_number}</td>
-                        <td style={styles.cell}>{item.IQC_number}</td>
                         <td style={styles.cell}>{item.Updater}</td>
-                        <td style={styles.cell}>{item.Rack_number}</td>
                         <td style={styles.cell}>{item.QTY}</td>
                         <td style={styles.cell}>{item.ID}</td>
                       </tr>
@@ -458,7 +466,6 @@ class Profile extends Component {
       </div>
     );
   };
-  
 
   render() {
     const {
@@ -583,19 +590,21 @@ class Profile extends Component {
                           <Col lg="9"></Col>
                         </Row>
                         <FormGroup
-                      style={{ display: "inline-block", marginRight: "50px" ,width: "100%"}}
-                    >
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Search"
-                        type="text"
-                        
-                      />
-                    </FormGroup>
+                          style={{
+                            display: "inline-block",
+                            marginRight: "50px",
+                            width: "100%",
+                          }}
+                        >
+                          <Input
+                            className="form-control-alternative"
+                            placeholder="Search"
+                            type="text"
+                          />
+                        </FormGroup>
                         <div> {this.renderTable()} </div>
                       </div>
                     </div>
-
 
                     <br></br>
                     <Row>
