@@ -39,6 +39,7 @@ class Profile extends Component {
       isModalOpen: false, // Example modal state
       dataEntries: [], // Array to store objects of each entry
       Raw_Dat: [],
+      searchQuery: "", // State for the search query
     };
   }
   toggleModal = (stateKey) => {
@@ -392,12 +393,17 @@ class Profile extends Component {
     console.log("Delete item with ID:", id);
   };
   renderTable = () => {
-    const { Raw_Dat } = this.state;
-
-    if (!Array.isArray(Raw_Dat) || Raw_Dat.length === 0) {
+    const { Raw_Dat, searchQuery } = this.state;
+  
+    // Filter Raw_Dat based on the search query
+    const filteredData = Raw_Dat.filter(item =>
+      item.Part_name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
+    if (!Array.isArray(filteredData) || filteredData.length === 0) {
       return <p>No data available</p>;
     }
-
+  
     return (
       <div className="content">
         <div className="container-fluid">
@@ -414,8 +420,6 @@ class Profile extends Component {
                 >
                   <thead>
                     <tr align="center">
-                      {/* <th style={styles.headerCell}>Actions</th> */}
-                      <th style={styles.headerCell}>ESL_number</th>
                       <th style={styles.headerCell}>Part_number</th>
                       <th style={styles.headerCell}>Model</th>
                       <th style={styles.headerCell}>Part_name</th>
@@ -430,17 +434,8 @@ class Profile extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {Raw_Dat.map((item, index) => (
+                    {filteredData.map((item, index) => (
                       <tr key={index}>
-                        {/* <td style={styles.cell}>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => this.handleDelete(item.ID)}
-                          >
-                            Delete
-                          </button>
-                        </td> */}
-                        <td style={styles.cell}>{item.ESL_number}</td>
                         <td style={styles.cell}>{item.Part_number}</td>
                         <td style={styles.cell}>{item.Model}</td>
                         <td style={styles.cell}>{item.Part_name}</td>
@@ -463,20 +458,21 @@ class Profile extends Component {
       </div>
     );
   };
+  
 
   render() {
     const {
-      moNumber,
-      model,
-      iqcNumber,
-      itemNumber,
-      qty,
-      vendor,
-      mold,
-      scannedValue,
-      partname,
+      // moNumber,
+      // model,
+      // iqcNumber,
+      // itemNumber,
+      // qty,
+      // vendor,
+      // mold,
+      // scannedValue,
+      // partname,
       counter,
-      Issue_part_KitupF4,
+      // Issue_part_KitupF4,
     } = this.state;
 
     return (
@@ -522,7 +518,7 @@ class Profile extends Component {
                           <img
                             alt="..."
                             className="rounded-circle"
-                            src={require("assets/img/theme/hard-disk.png")}
+                            src={require("assets/img/theme/delivery-box.png")}
                           />
                         </a>
                       </div>
@@ -586,120 +582,21 @@ class Profile extends Component {
                         <Row className="justify-content-center">
                           <Col lg="9"></Col>
                         </Row>
+                        <FormGroup
+                      style={{ display: "inline-block", marginRight: "50px" ,width: "100%"}}
+                    >
+                      <Input
+                        className="form-control-alternative"
+                        placeholder="Search"
+                        type="text"
+                        
+                      />
+                    </FormGroup>
                         <div> {this.renderTable()} </div>
                       </div>
                     </div>
 
-                    {/* <FormGroup>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Please scan the QR code"
-                        type="text"
-                        onKeyDown={this.handleTextChange} // Change from onChange to onKeyDown
-                        onChange={this.handleScan}
-                        value={scannedValue} // Bind the input value to the state
-                        style={{ fontSize: "20px" }} // Set the font size here
-                      />
-                    </FormGroup>
 
-                    <FormGroup>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Model"
-                        type="text"
-                        style={{ fontSize: "19px" }} // Set the font size here
-                        value={model}
-                      />
-                    </FormGroup>
-                    <FormGroup
-                      style={{ display: "inline-block", marginRight: "50px" }}
-                    >
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="MO number"
-                        type="text"
-                        value={moNumber}
-                        style={{ fontSize: "19px", width: "450px" }} // Set the font size here
-                      />
-                    </FormGroup>
-
-                    <FormGroup style={{ display: "inline-block" }}>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="IQC number"
-                        type="text"
-                        value={iqcNumber}
-                        style={{ fontSize: "19px", width: "450px" }} // Set the font size here
-                      />
-                    </FormGroup>
-
-                    <FormGroup
-                      style={{ display: "inline-block", marginRight: "50px" }}
-                    >
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Item number"
-                        type="text"
-                        value={itemNumber}
-                        style={{ fontSize: "19px", width: "450px" }} // Set the font size here
-                      />
-                    </FormGroup>
-
-                    <FormGroup style={{ display: "inline-block" }}>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Part name"
-                        type="text"
-                        value={partname}
-                        style={{ fontSize: "19px", width: "450px" }} // Set the font size here
-                      />
-                    </FormGroup>
-
-                    <FormGroup
-                      style={{ display: "inline-block", marginRight: "50px" }}
-                    >
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="QTY"
-                        type="text"
-                        value={qty}
-                        style={{ fontSize: "19px", width: "450px" }}
-                      />
-                    </FormGroup>
-
-                    <FormGroup style={{ display: "inline-block" }}>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Vendor"
-                        type="text"
-                        style={{ fontSize: "19px", width: "450px" }}
-                        value={vendor}
-                      />
-                    </FormGroup>
-
-                    <FormGroup
-                      style={{ display: "inline-block", marginRight: "50px" }}
-                    >
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Mold"
-                        type="text"
-                        style={{ fontSize: "19px", width: "450px" }}
-                        value={mold}
-                      />
-                    </FormGroup>
-
-                    <FormGroup style={{ display: "inline-block" }}>
-                      <Input
-                        className="form-control-alternative"
-                        placeholder="Timestamp F4"
-                        type="text"
-                        value={Issue_part_KitupF4}
-                        style={{ fontSize: "19px", width: "450px" }}
-                      />
-                    </FormGroup> */}
-
-                    <br></br>
                     <br></br>
                     <Row>
                       <Col md="4">
@@ -851,11 +748,7 @@ class Profile extends Component {
     );
   }
 }
-// Styling for table cells and headers
-// const styles = {
-//   headerCell: { backgroundColor: "#f8f9fa", fontWeight: "bold" },
-//   cell: { padding: "8px", textAlign: "center", border: "1px solid #ddd" },
-// };
+
 const styles = {
   headerCell: {
     borderBottom: "2px solid black",
