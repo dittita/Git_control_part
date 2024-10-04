@@ -44,7 +44,7 @@ class Profile extends Component {
       selectedItems: [], // State to track selected checkboxes
       notificationModal: false,
       inputValues: {},
-
+      dataEntries3: [], // Array to store objects of each entry
     };
   }
   toggleModal = (modal) => {
@@ -279,13 +279,36 @@ class Profile extends Component {
       </div>
     );
   };
+  fetchDatalabel = async (data,Index) => {
+    console.log(data);
+    try {
+      const response = await httpClient.get(
+        `${server.ISUUEPART_URL}/label_tray_QTY/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}`
+      );
+      console.log(response);
+
+      // return {response};
+      try {
+        this.setState((prevState) => {
+          const updatedEntries = [...prevState.dataEntries2];
+          updatedEntries[Index] = {
+            ...data,
+            Pack: 1,
+          };
+          return { dataEntries2: updatedEntries };
+        });
+      } catch (error) {
+        console.error("Error updating state: ", error); // Log the error for debugging
+      }
+    } catch {}
+  };
   renderDataEntries = () => {
     const { selectedItems, Raw_Dat, dataEntries2 } = this.state;
-  
+
     const entriesToRender = selectedItems.map((id) => {
       return Raw_Dat.find((item) => item.ID === id);
     });
-  
+
     return (
       <div>
         {entriesToRender.length > 0 ? (
@@ -296,24 +319,82 @@ class Profile extends Component {
             .map((entry, index) => {
               // Check the status from dataEntries2 instead of entry
               const updatedEntry = dataEntries2[index] || entry;
-  
-              const labelPartStyle = {
+
+              let labelPartStyle = {
                 fontSize: "19px",
                 textAlign: "center",
-                borderColor:
-                  updatedEntry.labelPartStatus === "success"
-                    ? "#28a745" // Green for success
-                    : updatedEntry.labelPartStatus === "error"
-                    ? "#dc3545" // Red for error
-                    : "#ced4da", // Grey for neutral
-                backgroundColor:
-                  updatedEntry.labelPartStatus === "success"
-                    ? "#d4edda" // Light green for success
-                    : updatedEntry.labelPartStatus === "error"
-                    ? "#f8d7da" // Light red for error
-                    : "white", // White for neutral
+                borderColor: "#ced4da", // Default grey
+                backgroundColor: "white", // Default white
               };
-  
+
+              let eslTagStyle = {
+                fontSize: "19px",
+                textAlign: "center",
+                borderColor: "#ced4da", // Default grey
+                backgroundColor: "white", // Default white
+              };
+              let MOTagStyle = {
+                fontSize: "19px",
+                textAlign: "center",
+                borderColor: "#ced4da", // Default grey
+                backgroundColor: "white", // Default white
+              };
+              console.log(updatedEntry);
+              // Check if `updatedEntry.num` equals "1"
+              if (updatedEntry.num === 1) {
+                labelPartStyle = {
+                  ...labelPartStyle, // Keep existing properties
+                  borderColor:
+                    updatedEntry.labelPartStatus === "success"
+                      ? "#28a745" // Green for success
+                      : updatedEntry.labelPartStatus === "error"
+                      ? "#dc3545" // Red for error
+                      : "#ced4da", // Grey for neutral
+                  backgroundColor:
+                    updatedEntry.labelPartStatus === "success"
+                      ? "#d4edda" // Light green for success
+                      : updatedEntry.labelPartStatus === "error"
+                      ? "#f8d7da" // Light red for error
+                      : "white", // White for neutral
+                };
+              } else if (updatedEntry.num === 2) {
+                console.log(updatedEntry.eslTagStyleStatus);
+                eslTagStyle = {
+                  ...eslTagStyle, // Keep existing properties
+                  borderColor:
+                    updatedEntry.eslTagStyleStatus === "success"
+                      ? "#28a745" // Green for success
+                      : updatedEntry.eslTagStyleStatus === "error"
+                      ? "#dc3545" // Red for error
+                      : "#ced4da", // Grey for neutral
+                  backgroundColor:
+                    updatedEntry.eslTagStyleStatus === "success"
+                      ? "#d4edda" // Light green for success
+                      : updatedEntry.eslTagStyleStatus === "error"
+                      ? "#f8d7da" // Light red for error
+                      : "white", // White for neutral
+                };
+              } else if (updatedEntry.num === 3) {
+                MOTagStyle = {
+                  ...eslTagStyle, // Keep existing properties
+                  borderColor:
+                    updatedEntry.labelPartStatus === "success"
+                      ? "#28a745" // Green for success
+                      : updatedEntry.labelPartStatus === "error"
+                      ? "#dc3545" // Red for error
+                      : "#ced4da", // Grey for neutral
+                  backgroundColor:
+                    updatedEntry.labelPartStatus === "success"
+                      ? "#d4edda" // Light green for success
+                      : updatedEntry.labelPartStatus === "error"
+                      ? "#f8d7da" // Light red for error
+                      : "white", // White for neutral
+                };
+              }
+
+              // console.log('labelPartStyle:', labelPartStyle);
+              // console.log('eslTagStyle:', eslTagStyle);
+
               return (
                 <div key={index} style={{ marginBottom: "15px" }}>
                   <h5 style={{ color: "white" }}>
@@ -324,8 +405,25 @@ class Profile extends Component {
                     {updatedEntry.IQC_number || "No IQC Data"} / Model:{" "}
                     {updatedEntry.Model || "No Model Data"} / Vendor:{" "}
                     {updatedEntry.Vendor || "No Vendor Data"} / QTY:{" "}
-                    {updatedEntry.QTY || "No Data"}
+                    {updatedEntry.QTY || "No Data"} / Pack:
                   </h5>
+
+                  <FormGroup>
+                    <Input
+                      className="form-control-alternative-center"
+                      placeholder="Scan ESL Tag"
+                      type="text"
+                      style={eslTagStyle}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" ) { // Check if the Enter key is pressed
+                          this.handleKeyDown(index, event, updatedEntry, 2);
+          
+                        }
+                      }}
+                    />
+                    {/* ESL Tag Input (similar style as above) */}
+                  </FormGroup>
+
                   <FormGroup>
                     <Input
                       className="form-control-alternative-center"
@@ -334,6 +432,19 @@ class Profile extends Component {
                       style={labelPartStyle}
                       onKeyDown={(event) =>
                         this.handleKeyDown(index, event, updatedEntry, 1)
+                      }
+                    />
+                    {/* ESL Tag Input (similar style as above) */}
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Input
+                      className="form-control-alternative-center"
+                      placeholder="Scan MO Tag"
+                      type="text"
+                      style={MOTagStyle}
+                      onKeyDown={(event) =>
+                        this.handleKeyDown(index, event, updatedEntry, 3)
                       }
                     />
                     {/* ESL Tag Input (similar style as above) */}
@@ -347,72 +458,126 @@ class Profile extends Component {
       </div>
     );
   };
-  
-  
+
   handleKeyDown = async (index, event, entry, num) => {
     const { inputValues } = this.state;
-  
+    console.log(num);
     // Update the state with the new input values
     const newInputValues = {
       ...inputValues,
       [`${index}-${num}`]: event.target.value,
     };
     this.setState({ inputValues: newInputValues });
-  
+
     const value = event.target.value;
-  
+
     if (event.key === "Enter") {
       try {
         let result = "";
-  
+
         if (num === 1) {
           // Scan label part
-          let sanitizedModel 
-          try{
+          let sanitizedModel;
+          try {
             sanitizedModel = entry.Model ? entry.Model.replace(/\//g, "-") : "";
-          }catch{
-            sanitizedModel = entry.Model
+          } catch {
+            sanitizedModel = entry.Model;
           }
-        
-           
+
           for (let i = 9; i <= 15; i++) {
             const substringValue = value.substring(0, i); // Extract substring from 0 to `i`
-  
+
             try {
               // Make the HTTP request using the substring
               result = await httpClient.get(
                 `${server.COMPONENT_URL}/label_tray/${sanitizedModel}/${entry.Vendor}/${entry.Part_name}/${entry.Part_number}/${entry.Mold}/${substringValue}`
               );
-  
+              //console.log(result);
               // Check the result's Model property
               if (result.data.result[0].Model) {
                 console.log("Model found, breaking the loop");
                 break; // Exit the loop if a valid Model is found
               }
             } catch (error) {
-              console.error(`Error occurred for substring "${substringValue}":`, error);
+              console.error(
+                `Error occurred for substring "${substringValue}":`,
+                error
+              );
             }
           }
-  
-          // After loop, check final result
-          this.setState((prevState) => {
-            const updatedEntries = [...prevState.dataEntries2];
-            updatedEntries[index] = {
-              ...entry,
-              labelPartStatus: result.data.result[0].Model ? "success" : "error", // Update label part status
-            };
-            return { dataEntries2: updatedEntries };
-          });
-        } else if (num === 2) {
-          // Scan ESL Tag
-          this.setState((prevState) => {
-            const updatedEntries = [...prevState.dataEntries2];
-            updatedEntries[index] = {
-              ...entry,
-              eslTagStatus: value === entry.ESL_number ? "success" : "error", // Update ESL tag status
-            };
-            return { dataEntries2: updatedEntries };
-          });
+          try {
+            this.setState((prevState) => {
+              const updatedEntries = [...prevState.dataEntries2];
+              const modelExists = result?.data?.result?.[0]?.Model; // Check if Model exists
+              updatedEntries[index] = {
+                ...entry,
+                num: 1,
+                labelPartStatus: modelExists ? "success" : "error", // Update label part status based on Model existence
+              };
+              return { dataEntries2: updatedEntries };
+            });
+          } catch (error) {
+            console.error("Error updating state: ", error); // Log the error for debugging
+          }
+        } else if (num == "2") {
+
+          // Scan label esl
+ 
+          let sanitizedModel = entry.Model;
+          try {
+            sanitizedModel = entry.Model ? entry.Model.replace(/\//g, "-") : "";
+          } catch {
+            sanitizedModel = entry.Model;
+          }
+
+          // Example usage: logging or setting state
+          try {
+            // Make the HTTP request using the substring
+            const result = await httpClient.get(
+              `${server.ISUUEPART_URL}/label_tray_QTY/${sanitizedModel}/${entry.Vendor}/${entry.Part_name}/${entry.Part_number}/${entry.Mold}`
+            );
+            console.log(result);
+            // Check the result's Model property
+            if (result.data.result[0].Qty_per_bundle !== "") {
+             
+           
+            }else {
+              // const starttt = result.data.result[0].Qty_per_pack ;
+            }
+          } catch (error) {
+           
+          }
+
+          try {
+            // console.log(entry);
+            if (value === entry.ESL_number) {
+              this.setState((prevState) => {
+                const updatedEntries = [...prevState.dataEntries2];
+                // const modelExists = result?.data?.result?.[0]?.Model; // Check if Model exists
+                updatedEntries[index] = {
+                  ...entry,
+                  num: 2,
+                  eslTagStyleStatus: "success", // Update label part status based on Model existence
+                };
+                console.log(updatedEntries);
+                return { dataEntries2: updatedEntries };
+              });
+            } else {
+              this.setState((prevState) => {
+                const updatedEntries = [...prevState.dataEntries2];
+                // const modelExists = result?.data?.result?.[0]?.Model; // Check if Model exists
+                updatedEntries[index] = {
+                  ...entry,
+                  num: 2,
+                  eslTagStyleStatus: "error", // Update label part status based on Model existence
+                };
+                console.log(updatedEntries);
+                return { dataEntries2: updatedEntries };
+              });
+            }
+          } catch (error) {
+            console.error("Error updating state: ", error); // Log the error for debugging
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -427,7 +592,7 @@ class Profile extends Component {
       }
     }
   };
-  
+
   render() {
     return (
       <>

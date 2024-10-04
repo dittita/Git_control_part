@@ -126,6 +126,44 @@ router.get("/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
     }
   }
 );
+
+//Select check
+router.get("/label_tray_QTY/:model/:supplier/:part_name/:item_no/:mold",
+  async (req, res) => {
+    try {
+      const { model, supplier, part_name, mold } =
+        req.params;
+      // Replace "-" with "/" in the model parameter
+      const sanitizedModel = model.replace(/-/g, "/");
+
+      let sanitizedMold = mold === "Mix mold" ? "" : mold;
+
+      // let data = `SELECT [Model],[Qty_per_pack],[Qty_per_bundle] FROM [Control_part].[dbo].[Master_finalPart] where [Model] = '${sanitizedModel}' and [Supplier] ='${supplier}' and [Part_name] = '${part_name}' and [Part_number_Seagate] = '${labeltray}' and [Part_number_NMB] ='${item_no}'`;
+      // console.log(data);
+
+      let result = await user.sequelize.query(
+        `SELECT [Model],[Qty_per_pack],[Qty_per_bundle] FROM [Control_part].[dbo].[Master_finalPart] where [Model] = '${sanitizedModel}' and [Supplier] ='${supplier}' and [Part_name] = '${part_name}' and Mold = '${sanitizedMold}'`
+      );
+
+      var listRawData = [];
+      listRawData.push(result[0]);
+
+      res.json({
+        result: result[0],
+        listRawData,
+        api_result: "ok",
+      });
+    } catch (error) {
+      console.log(error);
+      res.json({
+        error,
+        api_result: "nok",
+      });
+    }
+  }
+);
+
+
 //Find rack number emtry
 router.get("/rack_number/Clear_rack", async (req, res) => {
   try {
@@ -199,6 +237,8 @@ router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
     }
   }
 );
+
+
 router.patch("/esl_addItem", async (req, res) => {
   try {
     const { itemId, properties } = req.body;
