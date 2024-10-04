@@ -360,6 +360,7 @@ class Profile extends Component {
 
   // }
   renderDataEntries = () => {
+    
     return (
       <div>
         {this.state.dataEntries.length > 0 ? (

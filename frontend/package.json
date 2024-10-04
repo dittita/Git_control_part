@@ -47,6 +47,9 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.2",
     "ajv": "^8.16.0",
     "axios": "^1.7.5",
     "bootstrap": "4.6.2",
