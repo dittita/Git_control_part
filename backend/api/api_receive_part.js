@@ -261,7 +261,7 @@ router.patch("/esl_addItem", async (req, res) => {
 // console.log("partname"+ partname);
     //Update status rack
     await user.sequelize.query(
-      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful' , [Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${totalQTY}' where [Rack_number] = '${itemId}' and [Status] = 'Wait' and Number = '${number_txt}'`
+      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful' , [Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${qtyFromProperties}' where [Rack_number] = '${itemId}' and [Status] = 'Wait' and Number = '${number_txt}'`
     );
     //Update status rack
     let result4  = await user.sequelize.query(

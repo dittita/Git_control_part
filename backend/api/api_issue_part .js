@@ -9,7 +9,8 @@ router.get("/Data_racknumber", async (req, res) => {
   try {
 
     let result = await user.sequelize.query(
-      `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number] order by [Model],[Part_name]`
+      `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]  order by [Model],[Part_name]`
+      // `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]   where Mo_number is not null and Status != 'Successful' order by [Model],[Part_name]`
     );
 
     var listRawData = [];
@@ -237,8 +238,43 @@ router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
     }
   }
 );
+//Find rack number emtry
+router.get("/Bafore_L/:model/:supplier/:part_name/:item_no/:mold",
+  async (req, res) => {
+    try {
+      const { model, supplier, part_name, item_no, mold } = req.params;
+      // Replace "-" with "/" in the model parameter
+      let sanitizedModel = ""
+      try{
+         sanitizedModel = model.replace(/-/g, "/");
+      }catch{
+        sanitizedModel = model
+      }
+    
 
+      let sanitizedMold = mold === "" ? "Mix mold" : mold;
 
+      let result = await user.sequelize.query(
+        `SELECT TOP(1) [Over_issue_L] FROM [Control_part].[dbo].[Issue_part_KitupCR] where [Model] ='${sanitizedModel}' and [Supplier] ='${supplier}' and Part_name ='${part_name}' and Item_no ='${item_no}' and Mold ='${sanitizedMold}' order by [DateTime_KitupCR] DESC `
+      );
+
+      var listRawData = [];
+      listRawData.push(result[0]);
+     
+      res.json({
+        result: result[0],
+        listRawData,
+        api_result: "ok",
+      });
+    } catch (error) {
+      console.log(error);
+      res.json({
+        error,
+        api_result: "nok",
+      });
+    }
+  }
+);
 router.patch("/esl_addItem", async (req, res) => {
   try {
     const { itemId, properties } = req.body;
