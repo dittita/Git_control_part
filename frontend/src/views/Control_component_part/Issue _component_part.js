@@ -23,6 +23,10 @@ import SimpleFooter from "components/Footers/SimpleFooter.js";
 class Profile extends Component {
   constructor(props) {
     super(props);
+    // Create a ref for the ESL Tag input
+    this.eslTagRef = React.createRef();
+    this.labeltag = React.createRef();
+
     this.state = {
       moNumber: "",
       model: "",
@@ -48,6 +52,8 @@ class Profile extends Component {
       updatedData: "", // State to hold the updated data
       afterL: "",
     };
+    // Create refs for all input fields
+    this.inputRefs = [];
   }
   toggleModal = (modal) => {
     this.setState((prevState) => ({ [modal]: !prevState[modal] }));
@@ -436,7 +442,14 @@ class Profile extends Component {
                       : "white", // White for neutral
                 };
               }
-
+              // Check if input refs are already created for this index
+              if (!this.inputRefs[index]) {
+                this.inputRefs[index] = {
+                  MOTag: React.createRef(),
+                  eslTag: React.createRef(),
+                  labelPart: React.createRef(),
+                };
+              }
               return (
                 <div key={index} style={{ marginBottom: "15px" }}>
                   <h5 style={{ color: "white" }}>
@@ -447,7 +460,7 @@ class Profile extends Component {
                     {updatedEntry.IQC_number || "No IQC Data"} / Model:{" "}
                     {updatedEntry.Model || "No Model Data"} / Vendor:{" "}
                     {updatedEntry.Vendor || "No Vendor Data"} / QTY:{" "}
-                    {updatedEntry.QTY || "No Data"}
+                    {updatedEntry.QTY || "No Data"}/ L : {updatedEntry.L_part}
                   </h5>
                   {/* <h5> Pack : {this.state.updatedData} </h5> */}
                   <FormGroup>
@@ -455,10 +468,16 @@ class Profile extends Component {
                       className="form-control-alternative-center"
                       placeholder="Scan MO Tag"
                       type="text"
+                      innerRef={this.MOTag} // Ref for the second input"
                       style={MOTagStyle}
-                      onKeyDown={(event) =>
-                        this.handleKeyDown(index, event, updatedEntry, 3)
-                      }
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          // Focus the ESL Tag input
+                          this.inputRefs[index].eslTag.current.focus(); // Focus ESL Tag input
+                          // Check if the Enter key is pressed
+                          this.handleKeyDown(index, event, updatedEntry, 3);
+                        }
+                      }}
                     />
                     {/* ESL Tag Input (similar style as above) */}
                   </FormGroup>
@@ -468,11 +487,14 @@ class Profile extends Component {
                       className="form-control-alternative-center"
                       placeholder="Scan ESL Tag"
                       type="text"
+                      innerRef={this.inputRefs[index].eslTag} // Use dynamic ref
+                      // ref={this.eslTagRef} // Assign the ref here
                       style={eslTagStyle}
                       onKeyDown={(event) => {
                         if (event.key === "Enter") {
                           // Check if the Enter key is pressed
                           this.handleKeyDown(index, event, updatedEntry, 2);
+                          this.inputRefs[index].labelPart.current.focus(); // Focus Label Part input
                         }
                       }}
                     />
@@ -485,6 +507,7 @@ class Profile extends Component {
                       placeholder="Scan label part"
                       type="text"
                       style={labelPartStyle}
+                      innerRef={this.inputRefs[index].labelPart} // Use dynamic ref
                       onKeyDown={(event) =>
                         this.handleKeyDown(index, event, updatedEntry, 1)
                       }
@@ -533,7 +556,7 @@ class Profile extends Component {
           let scanSuccess = false; // Flag to check if scan was successful
 
           let result;
-          for (let i = 9; i <= value.length; i++) {
+          for (let i = 9; i <= 15; i++) {
             const substringValue = value.substring(0, i); // Extract substring from 0 to `i`
 
             try {
@@ -550,6 +573,19 @@ class Profile extends Component {
                 break;
               }
             } catch (error) {
+              this.setState((prevState) => {
+                const updatedEntries = [...prevState.dataEntries2];
+
+                updatedEntries[index] = {
+                  ...updatedEntries[index], // Spread the existing entry
+                  num: 1,
+                  labelPartStatus: "error",
+                  // countertxt: updatedEntries[index].countertxt || 0, // Ensure it’s a number
+                };
+
+                return { dataEntries2: updatedEntries };
+              });
+              event.target.value = "";
               console.error(
                 `Error occurred for substring "${substringValue}":`,
                 error
@@ -564,9 +600,13 @@ class Profile extends Component {
             if (modelExists !== "") {
               this.setState((prevState) => {
                 const updatedEntries = [...prevState.dataEntries2];
-                const newCountertxt = (parseInt(updatedEntries[index].countertxt, 10) || 0) - 1;
+                const newCountertxt =
+                  (parseInt(updatedEntries[index].countertxt, 10) || 0) - 1;
 
-                if (newCountertxt == parseInt(updatedEntries[index].Pack, 10)-1) {
+                if (
+                  newCountertxt ==
+                  parseInt(updatedEntries[index].Pack, 10) - 1
+                ) {
                   alert("stoppp !! !");
                 } else {
                   // Safely increment countertxt
@@ -672,24 +712,32 @@ class Profile extends Component {
                 const updatedEntries = [...prevState.dataEntries2];
                 console.log(updatedEntries);
                 const updatedEntry1 = updatedEntries[index] || entry;
-                const updatedEntry2 = updatedEntries[index-1] || entry;
+                const updatedEntry2 = updatedEntries[index - 1] || entry;
                 console.log(index);
-                 if(index > 0 && updatedEntry1.Model === updatedEntry2.Model &&
-                  updatedEntry1.Part_name === updatedEntry2.Part_name && updatedEntry1.Vendor === updatedEntry2.Vendor)
-                  {
-                    const oldSum = parseInt(updatedEntry1.QTY, 10) + parseInt(updatedEntry2.L_part, 10);
-                    console.log(oldSum);
-                    if(oldSum<0){
-                      cal_LAfter = oldSum
-                      pack = 0
-                    }
+                if (
+                  index > 0 &&
+                  updatedEntry1.Model === updatedEntry2.Model &&
+                  updatedEntry1.Part_name === updatedEntry2.Part_name &&
+                  updatedEntry1.Vendor === updatedEntry2.Vendor
+                ) {
+                  const oldSum =
+                    parseInt(updatedEntry1.QTY, 10) +
+                    parseInt(updatedEntry2.L_part, 10);
+                  // console.log(oldSum);
+                  if (oldSum < 0) {
+                    cal_LAfter = oldSum;
+                    pack = 0;
+                  } else {
+                    pack = Math.ceil(oldSum / currentQty);
+                    cal_LAfter = Math.ceil(pack * currentQty) - oldSum;
                   }
+                }
                 console.log(updatedEntry2);
                 updatedEntries[index] = {
                   ...entry,
                   num: 3,
                   Pack: pack, // Update the Pack value in state
-                  L_part: "-"+cal_LAfter,
+                  L_part: "-" + cal_LAfter,
                   MOTagStyle: "success",
                 };
                 return { dataEntries2: updatedEntries };
@@ -862,9 +910,10 @@ class Profile extends Component {
                               color="link"
                               data-dismiss="modal"
                               type="button"
-                              onClick={() =>
-                                this.toggleModal("notificationModal")
-                              }
+                              onClick={() => {
+                                this.clearInput();
+                                this.toggleModal("notificationModal");
+                              }}
                             >
                               Close
                             </Button>
