@@ -347,6 +347,41 @@ router.patch("/esl_addItem", async (req, res) => {
     });
   }
 });
+router.get("/insert/:model/:supplier/:part_name/:item_no/:mold/:Monumber/:IQC_lot/:QTY/:Emp:/:ToLine/:EMPLine/:Pack/:OverL",
+  async (req, res) => {
+    try {
+      const { model, supplier, part_name, item_no, mold } = req.params;
+      // Replace "-" with "/" in the model parameter
+      let sanitizedModel = ""
+      try{
+         sanitizedModel = model.replace(/-/g, "/");
+      }catch{
+        sanitizedModel = model
+      }
+    
 
+      let sanitizedMold = mold === "" ? "Mix mold" : mold;
+
+      let result = await user.sequelize.query(
+        `SELECT TOP(1) [Over_issue_L] FROM [Control_part].[dbo].[Issue_part_KitupCR] where [Model] ='${sanitizedModel}' and [Supplier] ='${supplier}' and Part_name ='${part_name}' and Item_no ='${item_no}' and Mold ='${sanitizedMold}' order by [DateTime_KitupCR] DESC `
+      );
+
+      var listRawData = [];
+      listRawData.push(result[0]);
+     
+      res.json({
+        result: result[0],
+        listRawData,
+        api_result: "ok",
+      });
+    } catch (error) {
+      console.log(error);
+      res.json({
+        error,
+        api_result: "nok",
+      });
+    }
+  }
+);
 
 module.exports = router;

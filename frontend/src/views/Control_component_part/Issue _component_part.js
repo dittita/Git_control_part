@@ -762,6 +762,82 @@ class Profile extends Component {
       }
     }
   };
+  handleClick_els = async () => {
+    const { inputValues, dataEntries } = this.state;
+    // Collect data from the input fields
+    const collectedData = dataEntries.map((entry, index) => ({
+      ...entry,
+      labelPartValue: inputValues[`${index}-1`] || "", // Value from label part textbox
+      eslTagValue: inputValues[`${index}-2`] || "", // Value from ESL Tag textbox
+    }));
+    // Log the collected data
+    // console.log("Collected data :", collectedData);
+
+    // Convert collected data to JSON format
+    const jsonData = JSON.stringify(collectedData);
+    console.log("jsonData data :", jsonData);
+    // Loop through collected data and send PATCH requests for each entry
+    collectedData.forEach(async (item) => {
+      try {
+        const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
+        console.log(item);
+
+        const response = await httpClient.patch(
+          // Ensure "patch" is lowercase
+          `${server.COMPONENT_URL}/esl_addItem`, // URL
+          {
+            itemId: item.Rack_number, // Access Rack_number from each item
+            properties: {
+              MO_DL: item.model, // Access model
+              vendor:item.vendor,
+              Part: item.partname, // Access partname
+              QTY: item.qty, // Access the first part of the split moNumber
+              ["MO" + item.Number_MO]: "0", // Access the first part of the split moNumber
+              Number: item.Number_MO,
+              iqcNumber: item.iqcNumber,
+              // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json", // Ensure content type is set to JSON
+            },
+          }
+        );
+
+        //Insert data
+        // const response_insert = await httpClient.get(
+        //   `${server.ISUUEPART_URL}/label_tray_QTY/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}`
+        // );
+        // console.log(response_insert);
+
+        console.log(
+          `PATCH response for item ${item.Rack_number}:`,
+          response.data
+        );
+        this.clearInput();
+        // Define the action to take when the button is clicked
+        Swal.fire({
+          icon: "success",
+          title: "Good job!",
+          text: "Ok, Got it!",
+          confirmButtonText: "Close",
+        });
+      } catch (error) {
+        console.error(
+          `Error during PATCH request for item ${item.Rack_number}:`,
+          error
+        );
+        Swal.fire({
+          title: "Error!",
+          icon: "error",
+          text: "Ok, Got it!",
+          confirmButtonText: "Close",
+        });
+      }
+    });
+  };
+
 
   render() {
     return (
@@ -901,7 +977,7 @@ class Profile extends Component {
                               className="btn-white"
                               color="default"
                               type="button"
-                              // onClick={this.handleClick_els}
+                              onClick={this.handleClick_els}
                             >
                               Ok, Got it
                             </Button>
