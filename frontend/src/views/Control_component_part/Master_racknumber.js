@@ -239,21 +239,31 @@ class Profile extends Component {
     }
   };
   // Method to handle delete action
-  handleDelete = async (ID) => {
-    try {
-      // Send a DELETE request to your backend
-      await httpClient.delete(
-        `${server.MASTER_COMPONENT_URL}/delete-data/${ID}`
-      );
-      // console.log(result);
-      // Optionally, refresh the data after deletion
-      this.doGetDataReport();
-
-      alert(`Record with ESL number ${ID} deleted successfully!`);
-    } catch (error) {
-      console.error("Error deleting data:", error);
-      alert(`Error deleting data: ${error.message}`);
+  handleDelete = async (ID,QTY) => {
+    if(QTY == ""){
+      try {
+        // Send a DELETE request to your backend
+        await httpClient.delete(
+          `${server.MASTER_COMPONENT_URL}/delete-data/${ID}`
+        );
+        // console.log(result);
+        // Optionally, refresh the data after deletion
+        this.doGetDataReport();
+  
+        alert(`Record with ESL number ${ID} deleted successfully!`);
+      } catch (error) {
+        console.error("Error deleting data:", error);
+        alert(`Error deleting data: ${error.message}`);
+      }
+    }else{
+      Swal.fire({
+        title: "Error!",
+        icon: "error",
+        text: "Something went wrong on the server. Please try again later.",
+        confirmButtonText: "Close",
+      });
     }
+ 
   };
 
   // Render method to display the table
@@ -293,6 +303,7 @@ class Profile extends Component {
                       <th style={styles.headerCell}>Updater</th>
                       <th style={styles.headerCell}>Rack_number</th>
                       <th style={styles.headerCell}>QTY</th>
+                      {/* <th style={styles.headerCell}>MO</th> */}
                       <th style={styles.headerCell}>ID</th>
                     </tr>
                   </thead>
@@ -302,7 +313,7 @@ class Profile extends Component {
                         <td style={styles.cell}>
                           <button
                             className="btn btn-danger"
-                            onClick={() => this.handleDelete(item.ID)} // Pass ESL_number to delete
+                            onClick={() => this.handleDelete(item.ID,item.QTY)} // Pass ESL_number to delete
                           >
                             Delete
                           </button>
@@ -316,6 +327,7 @@ class Profile extends Component {
                         <td style={styles.cell}>{item.Updater}</td>
                         <td style={styles.cell}>{item.Rack_number}</td>
                         <td style={styles.cell}>{item.QTY}</td>
+                        {/* <td style={styles.cell}>{item.Mo_number}</td> */}
                         <td style={styles.cell}>{item.ID}</td>
                       </tr>
                     ))}
@@ -408,7 +420,7 @@ class Profile extends Component {
           
           Swal.fire({
             title: "Error!",
-            icon: "Server error (500): Internal server issue.",
+            icon: "error",
             text: "Ok, Got it!",
             confirmButtonText: "Close",
           });

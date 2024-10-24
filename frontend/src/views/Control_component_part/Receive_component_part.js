@@ -453,32 +453,41 @@ class Profile extends Component {
       labelPartValue: inputValues[`${index}-1`] || "", // Value from label part textbox
       eslTagValue: inputValues[`${index}-2`] || "", // Value from ESL Tag textbox
     }));
-    // Log the collected data
-    // console.log("Collected data :", collectedData);
-
+  
     // Convert collected data to JSON format
     const jsonData = JSON.stringify(collectedData);
     console.log("jsonData data :", jsonData);
+  
     // Loop through collected data and send PATCH requests for each entry
-    collectedData.forEach(async (item) => {
+    for (const item of collectedData) {
+      if (item.labelPartStatus === "error") {
+        // Show error if labelPartStatus is 'error' and stop further processing
+        Swal.fire({
+          title: "Error!",
+          text: `Label part for MO ${item.moNumber} has an error. Please correct it before proceeding.`,
+          icon: "error",
+          confirmButtonText: "Close",
+        });
+        // Stop further processing for this item
+        return;
+      }
+  
       try {
         const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
-
+  
         const response = await httpClient.patch(
-          // Ensure "patch" is lowercase
           `${server.COMPONENT_URL}/esl_addItem`, // URL
           {
             itemId: item.Rack_number, // Access Rack_number from each item
             properties: {
               MO_DL: item.model, // Access model
-              vendor:item.vendor,
+              vendor: item.vendor,
               Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
               ["MO" + item.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
               Number: item.Number_MO,
               iqcNumber: item.iqcNumber,
-              // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
             },
           },
           {
@@ -487,12 +496,10 @@ class Profile extends Component {
             },
           }
         );
-        console.log(
-          `PATCH response for item ${item.Rack_number}:`,
-          response.data
-        );
+        console.log(`PATCH response for item ${item.Rack_number}:`, response.data);
         this.clearInput();
-        // Define the action to take when the button is clicked
+  
+        // Show success message for each valid item
         Swal.fire({
           icon: "success",
           title: "Good job!",
@@ -500,10 +507,7 @@ class Profile extends Component {
           confirmButtonText: "Close",
         });
       } catch (error) {
-        console.error(
-          `Error during PATCH request for item ${item.Rack_number}:`,
-          error
-        );
+        console.error(`Error during PATCH request for item ${item.Rack_number}:`, error);
         Swal.fire({
           title: "Error!",
           icon: "error",
@@ -511,8 +515,9 @@ class Profile extends Component {
           confirmButtonText: "Close",
         });
       }
-    });
+    }
   };
+  
 
   render() {
     const {

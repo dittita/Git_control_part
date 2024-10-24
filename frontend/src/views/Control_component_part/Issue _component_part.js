@@ -781,7 +781,7 @@ class Profile extends Component {
       try {
         const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
-
+        //Update ESL Tag    
         const response = await httpClient.patch(
           // Ensure "patch" is lowercase
           `${server.COMPONENT_URL}/esl_addItem`, // URL
@@ -792,7 +792,7 @@ class Profile extends Component {
               vendor:item.vendor,
               Part: item.partname, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
-              ["MO" + item.Number_MO]: "0", // Access the first part of the split moNumber
+              ["MO" + item.Number_MO]: "", // Access the first part of the split moNumber
               Number: item.Number_MO,
               iqcNumber: item.iqcNumber,
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
@@ -807,7 +807,7 @@ class Profile extends Component {
 
         //Insert data
         // const response_insert = await httpClient.get(
-        //   `${server.ISUUEPART_URL}/label_tray_QTY/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}`
+        //   `${server.ISUUEPART_URL}/insert/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}/{$data.OverL}/{}`
         // );
         // console.log(response_insert);
 

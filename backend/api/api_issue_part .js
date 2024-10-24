@@ -9,8 +9,8 @@ router.get("/Data_racknumber", async (req, res) => {
   try {
 
     let result = await user.sequelize.query(
-      `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]  order by [Model],[Part_name]`
-      // `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]   where Mo_number is not null and Status != 'Successful' order by [Model],[Part_name]`
+      // `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]  order by [Model],[Part_name]`
+      `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]   where Mo_number is not null and Status = 'Successful' order by [Model],[Part_name]`
     );
 
     var listRawData = [];
