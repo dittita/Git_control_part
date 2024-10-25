@@ -12,35 +12,76 @@ router.patch("/esl_linkESL", async (req, res) => {
     const http = require("http");
     //const { ID } = req.params;
     //let { ID } = req.body
+    // <<<<
+    //     var eslCode = "N4074190701913284"
+    //     var itemid = "A12"
+    // =======
+    // >>>>>>> upstream/main
 
     var eslCode = req.body.eslCode;
     var itemid = req.body.itemid;
 
     const json = {
-      barcode:  properties.barcode,
+      barcode: properties.barcode,
 
       links: [
         {
           barcode: properties.barcode,
           itemId: properties.itemId,
-       
+          
+          
         },
       ],
     };
     console.log(json);
-    
-    // let result_linkESL = await axios.patch(
-    //   "http://192.168.101.119:3333/api/public/core/v1/labels",
-    //   json,
-    //   {
-    //     headers: { "Content-Type": "application/json" },
-    //     auth: {username: "config", password: "config"},
-    //   }
-    // );
+    let result_linkESL = await axios.patch(
+      "http://192.168.101.119:3333/api/public/core/v1/labels",
+      json,
+      {
+        headers: { "Content-Type": "application/json" },
+        auth: { username: "config", password: "config" },
+      }
+    );
+    console.log("Start");
+    // get data and inset to data
+    // Create or modify itemDetails based on the incoming data
+       const itemDetails = {
+        itemId: properties.itemId || " ",  // Use incoming itemId or default value
+        properties: {
+          // itemName: itemName || "DefaultName",  // Use incoming itemName or default value
+          MO_DL: properties.MO_DL,
+          Part: properties.Part,
+          PART_NO: properties.PART_NO,
+          Vendor: properties.Vendor,
+          MO1: "",
+          MO2: "",
+          MO3: "",
+          QTY: "0",
+          // Add more properties as needed
+        }
+      };
+    console.log(itemDetails);
 
+    let result_addItem = await axios.patch(
+      "http://192.168.101.119:3333/api/public/core/v1/items",
+      itemDetails,
+      {
+        headers: { "Content-Type": "application/json" },
+        auth: {
+          username: process.env.API_USERNAME || "config",
+          password: process.env.API_PASSWORD || "config"
+        }
+      }
+    );
+
+    console.log("Result add"+result_addItem.data);
+    res.json({
+      result_addItem: result_addItem.data,
+      api_result: constants.OK
+    });
     res.json({
       //result_updateQty,
-      // result_linkESL: result_linkESL.data,
+      result_linkESL: result_linkESL.data,
       api_result: constants.OK,
     });
   } catch (error) {
