@@ -391,7 +391,7 @@ class Profile extends Component {
               }
 
               // console.log(updatedEntry);
-              if (updatedEntry.num == 1) {
+              if (updatedEntry.num === 1) {
                 labelPartStyle = {
                   ...labelPartStyle, // Keep existing properties
                   borderColor:
@@ -407,7 +407,7 @@ class Profile extends Component {
                       ? "#f8d7da" // Light red for error
                       : "white", // White for neutral
                 };
-              } else if (updatedEntry.num == 2) {
+              } else if (updatedEntry.num === 2) {
                 // console.log(updatedEntry.eslTagStatus);
                 eslTagStyle = {
                   ...eslTagStyle, // Keep existing properties
@@ -546,14 +546,14 @@ class Profile extends Component {
 
     if (event.key === "Enter") {
       try {
-        let result = "";
+        // let result = "";
         if (num === 1) {
           // console.log(parseInt(this.state.counter, 10) +"A :"+ parseInt(this.state.updatedData, 10));
 
           // Scan label part
           const sanitizedModel = entry.Model;
-          let counter = 0; // Initialize counter for the scan attempts
-          let scanSuccess = false; // Flag to check if scan was successful
+          // let counter = 0; // Initialize counter for the scan attempts
+          let scanSuccess = false; // Flag to chec3k if scan was successful
 
           let result;
           for (let i = 9; i <= 15; i++) {
@@ -604,7 +604,7 @@ class Profile extends Component {
                   (parseInt(updatedEntries[index].countertxt, 10) || 0) - 1;
 
                 if (
-                  newCountertxt ==
+                  newCountertxt ===
                   parseInt(updatedEntries[index].Pack, 10) - 1
                 ) {
                   alert("stoppp !! !");
@@ -779,7 +779,7 @@ class Profile extends Component {
     // Loop through collected data and send PATCH requests for each entry
     collectedData.forEach(async (item) => {
       try {
-        const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
+        // const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
         //Update ESL Tag    
         const response = await httpClient.patch(
@@ -805,7 +805,7 @@ class Profile extends Component {
           }
         );
 
-        //Insert data
+        // Insert data
         // const response_insert = await httpClient.get(
         //   `${server.ISUUEPART_URL}/insert/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}/{$data.OverL}/{}`
         // );
@@ -842,6 +842,7 @@ class Profile extends Component {
   render() {
     return (
       <>
+      
         <DemoNavbar />
         <main className="profile-page" ref="main">
           <section className="section-profile-cover section-shaped my-0">
@@ -872,6 +873,7 @@ class Profile extends Component {
               </svg>
             </div>
           </section>
+          
           <section className="section">
             <Container>
               <Card className="card-profile shadow mt--300">
@@ -1079,9 +1081,9 @@ const styles = {
     padding: "8px",
   },
 };
-const clearButtonStyle = {
-  color: "white",
-  backgroundColor: "transparent",
-  border: "none",
-};
+// const clearButtonStyle = {
+//   color: "white",
+//   backgroundColor: "transparent",
+//   border: "none",
+// };
 export default Profile;

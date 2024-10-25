@@ -15,7 +15,7 @@ app.use(cors());
 // app.use(cors(corsOptions));
 
 const corsOptions = {
-  origin: 'http://localhost:3000', 
+  origin: 'http://192.168.101.67:2031', 
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -42,7 +42,7 @@ app.use("/api/issue_part", require("./api/api_issue_part "));
 
 
 //NAS
-const Url = "192.168.101.13";
+// const Url = "192.168.101.13";
 // const MailUrl = "192.168.101.120"
 
 
@@ -58,9 +58,9 @@ const storage = multer.diskStorage({
 
 
 // Serve files statically
-app.use('/cleanliness-files', express.static(`\\\\${Url}\\Public\\Datacleanliness`));
+// app.use('/cleanliness-files', express.static(`\\\\${Url}\\Public\\Datacleanliness`));
 
 
-app.listen(2011, () => {
+app.listen(2032, () => {
   console.log("Backend is running...");
 });

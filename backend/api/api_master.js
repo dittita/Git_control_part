@@ -22,16 +22,13 @@ router.patch("/esl_linkESL", async (req, res) => {
       links: [
         {
           barcode: properties.barcode,
-          MO_DL: properties.MO_DL,
-          Part: properties.Part,
-          PART_NO: properties.PART_NO,
-          Vendor: properties.Vendor,
           itemId: properties.itemId,
-          ITEMIPF: "Tag2",
+       
         },
       ],
     };
     console.log(json);
+    
     // let result_linkESL = await axios.patch(
     //   "http://192.168.101.119:3333/api/public/core/v1/labels",
     //   json,
