@@ -109,94 +109,33 @@ class DemoNavbar extends React.Component {
                   </Row>
                 </div>
                 <Nav className="navbar-nav-hover align-items-lg-center" navbar>
-                  <UncontrolledDropdown nav>
-                    <DropdownToggle nav>
-                      {/* <i className="ni ni-ui-04 d-lg-none mr-1" /> */}
-                      <span className="nav-link-inner--text">Components</span>
-                    </DropdownToggle>
-                    <DropdownMenu className="dropdown-menu-xl">
-                      <div className="dropdown-menu-inner">
-                        <Media
-                          className="d-flex align-items-center"
-                          href="https://demos.creative-tim.com/argon-design-system-react/#/documentation/overview?ref=adsr-navbar"
-                          target="_blank"
-                        >
-                          <div className="icon icon-shape bg-gradient-primary rounded-circle text-white">
-                            <i className="ni ni-spaceship" />
-                          </div>
-                          <Media body className="ml-3">
-                            <h6 className="heading text-primary mb-md-1">
-                              Getting started
-                            </h6>
-                            <p className="description d-none d-md-inline-block mb-0">
-                              Learn how to use Argon compiling Scss, change
-                              brand colors and more.
-                            </p>
-                          </Media>
-                        </Media>
-                        <Media
-                          className="d-flex align-items-center"
-                          href="https://demos.creative-tim.com/argon-design-system-react/#/documentation/colors?ref=adsr-navbar"
-                          target="_blank"
-                        >
-                          <div className="icon icon-shape bg-gradient-success rounded-circle text-white">
-                            <i className="ni ni-palette" />
-                          </div>
-                          <Media body className="ml-3">
-                            <h6 className="heading text-primary mb-md-1">
-                              Foundation
-                            </h6>
-                            <p className="description d-none d-md-inline-block mb-0">
-                              Learn more about colors, typography, icons and the
-                              grid system we used for Argon.
-                            </p>
-                          </Media>
-                        </Media>
-                        <Media
-                          className="d-flex align-items-center"
-                          href="https://demos.creative-tim.com/argon-design-system-react/#/documentation/alert?ref=adsr-navbar"
-                          target="_blank"
-                        >
-                          <div className="icon icon-shape bg-gradient-warning rounded-circle text-white">
-                            <i className="ni ni-ui-04" />
-                          </div>
-                          <Media body className="ml-3">
-                            <h5 className="heading text-warning mb-md-1">
-                              Components
-                            </h5>
-                            <p className="description d-none d-md-inline-block mb-0">
-                              Browse our 50 beautiful handcrafted components
-                              offered in the Free version.
-                            </p>
-                          </Media>
-                        </Media>
-                      </div>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-             
-
-
-
-             
+                
                   <UncontrolledDropdown nav>
                     <DropdownToggle nav>
                       <i className="ni ni-collection d-lg-none mr-1" />
                       <span className="nav-link-inner--text">Master</span>
                     </DropdownToggle>
                     <DropdownMenu>
-                      <DropdownItem to="/racknumber" tag={Link}>
-                        
-                      <Media body className="ml-3">
-                 
-                            <h6 className="heading text-primary mb-md-1">
+                      <DropdownItem tag={Link} to="/racknumber">
+                        <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-primary rounded-circle text-white">
+                            <i className="ni ni-album-2" />
+                          </div>
+                          <h6 className="heading text-primary mb-md-1 ml-2">
                             Rack number
-                            </h6>
-                          
-                          </Media>
-                       
+                          </h6>
+                        </div>
                       </DropdownItem>
-                      <DropdownItem to="/profile-page" tag={Link}>
-                        Component part
+                      <DropdownItem to="/Master-part" tag={Link}>
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-info rounded-circle text-white">
+                            <i className="ni ni-atom" />
+                          </div>
+                          <h6 className="heading text-info mb-md-1 ml-2">
+                          Component part
+                          </h6>
+                        </div>
+                       
                       </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
@@ -208,17 +147,72 @@ class DemoNavbar extends React.Component {
                     </DropdownToggle>
                     <DropdownMenu>
                       <DropdownItem to="/Receive-page" tag={Link}>
-                      <h6 className="heading text-primary mb-md-1">
-                      Receiving Parts
-                            </h6> 
-                      </DropdownItem>
-                      <DropdownItem to="/Issue-page" tag={Link}>
-                      <h6 className="heading text-info mb-md-1">
-                      Issue component part 
-                            </h6> 
+
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-primary rounded-circle text-white">
+                            <i className="ni ni-basket" />
+                          </div>
+                          <h6 className="heading text-primary mb-md-1 ml-2">
+                          Receiving Parts
+                          </h6>
+                        </div>
                       
                       </DropdownItem>
-                  
+                      <DropdownItem to="/Issue-page" tag={Link}>
+                        
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-info rounded-circle text-white">
+                            <i className="ni ni-spaceship" />
+                          </div>
+                          <h6 className="heading text-info mb-md-1">
+                              Issue component part
+                          </h6>
+                        </div>
+                      
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+
+                  <UncontrolledDropdown nav>
+                    <DropdownToggle nav>
+                      <i className="ni ni-collection d-lg-none mr-1" />
+                      <span className="nav-link-inner--text">Return part</span>
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem to="/Receive-page" tag={Link}>
+
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-primary rounded-circle text-white">
+                          <i class="fa fa-battery-quarter" aria-hidden="true"></i>
+                          </div>
+                          <h6 className="heading text-primary mb-md-1 ml-2">
+                          Retrun type 1 (S1 have MO number)
+                          </h6>
+                        </div>
+                        
+                      </DropdownItem>
+                      <DropdownItem to="/Issue-page" tag={Link}>
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-info rounded-circle text-white">
+                          <i class="fa fa-battery-half" aria-hidden="true"></i>
+                          </div>
+                          <h6 className="heading text-info mb-md-1 ml-2">
+                          Retrun type 2 (S5)
+                          </h6>
+                        </div>
+                      
+                      </DropdownItem> <DropdownItem to="/Issue-page" tag={Link}>
+
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-success rounded-circle text-white">
+                          <i class="fa fa-battery-full" aria-hidden="true"></i>
+                          </div>
+                          <h6 className="heading text-success mb-md-1 ml-2">
+                          Retrun type 3 (S1)
+                          </h6>
+                        </div>
+                       
+                      </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
                 </Nav>

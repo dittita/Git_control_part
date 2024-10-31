@@ -51,10 +51,30 @@ class Profile extends Component {
       inputValues: {},
       updatedData: "", // State to hold the updated data
       afterL: "",
+      empLines: [], // State to hold dropdown options from the database
+      Linestxt: [], // Assuming this already contains  line" data
+      empLineData: [], // Array to store EMP line and line values
     };
     // Create refs for all input fields
     this.inputRefs = [];
   }
+  handleEmpLineChange = (index, event) => {
+    const value = event.target.value;
+    this.setState((prevState) => {
+      const empLineData = [...prevState.empLineData];
+      empLineData[index] = { ...empLineData[index], empLine: value };
+      return { empLineData };
+    });
+  };
+
+  handleLineChange = (index, lineValue) => {
+    this.setState((prevState) => {
+      const Linestxt = [...prevState.Linestxt];
+      Linestxt[index] = { ...Linestxt[index], line: lineValue };
+      return { Linestxt };
+    });
+  };
+
   toggleModal = (modal) => {
     this.setState((prevState) => ({ [modal]: !prevState[modal] }));
   };
@@ -310,12 +330,13 @@ class Profile extends Component {
     } catch {}
   };
   renderDataEntries = () => {
-    const { selectedItems, Raw_Dat, dataEntries2 } = this.state;
+    const { selectedItems, Raw_Dat, dataEntries2, empLineData,Linestxt } = this.state;
 
     const entriesToRender = selectedItems.map((id) => {
       return Raw_Dat.find((item) => item.ID === id);
     });
-
+    const { empLines } = this.state;
+    // const { inputline, EmpTagStyle } = this.props;
     return (
       <div>
         {entriesToRender.length > 0 ? (
@@ -390,6 +411,32 @@ class Profile extends Component {
                 };
               }
 
+              let EmpTagStyle = "";
+              try {
+                EmpTagStyle = {
+                  fontSize: "19px",
+                  textAlign: "center",
+                  borderColor:
+                    updatedEntry.EmpTagStyle === "success"
+                      ? "#28a745"
+                      : updatedEntry.EmpTagStyle === "error"
+                      ? "#dc3545"
+                      : "#ced4da",
+                  backgroundColor:
+                    updatedEntry.EmpTagStyle === "success"
+                      ? "#d4edda"
+                      : updatedEntry.EmpTagStyle === "error"
+                      ? "#f8d7da"
+                      : "white",
+                };
+              } catch (error) {
+                MOTagStyle = {
+                  fontSize: "19px",
+                  textAlign: "center",
+                  borderColor: "#ced4da", // Default grey
+                  backgroundColor: "white", // Default white
+                };
+              }
               // console.log(updatedEntry);
               if (updatedEntry.num === 1) {
                 labelPartStyle = {
@@ -447,6 +494,7 @@ class Profile extends Component {
                 this.inputRefs[index] = {
                   MOTag: React.createRef(),
                   eslTag: React.createRef(),
+                  Emptag: React.createRef(),
                   labelPart: React.createRef(),
                 };
               }
@@ -473,13 +521,53 @@ class Profile extends Component {
                       onKeyDown={(event) => {
                         if (event.key === "Enter") {
                           // Focus the ESL Tag input
-                          this.inputRefs[index].eslTag.current.focus(); // Focus ESL Tag input
+                          this.inputRefs[index].Emptag.current.focus(); // Focus ESL Tag input
                           // Check if the Enter key is pressed
                           this.handleKeyDown(index, event, updatedEntry, 3);
+                          this.dataline(updatedEntry.Model);
                         }
                       }}
                     />
                     {/* ESL Tag Input (similar style as above) */}
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      className="form-control-alternative-center"
+                      placeholder="Scan Emp line"
+                      type="text"
+                      innerRef={this.inputRefs[index].Emptag} // Ref for the second input"
+                      style={EmpTagStyle}
+                   
+                      onChange={(e) => this.handleEmpLineChange(index, e)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          // Focus the ESL Tag input
+                          this.inputRefs[index].eslTag.current.focus(); // Focus ESL Tag input
+                          // Check if the Enter key is pressed
+                        }
+                      }}
+                    />
+                    {/* ESL Tag Input (similar style as above) */}
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      className="form-control-alternative-center"
+                      // innerRef={inputRefs[index].Emptag}
+                      style={EmpTagStyle}
+                      onChange={(e) =>
+                        this.handleLineChange(index, e.target.value)
+                      }
+                    >
+                      <option value="">Select line</option>
+                      {empLines.map((empLines, index) => (
+                        <option key={empLines.index} value={empLines.index}>
+                          {empLines.Line}{" "}
+                          {/* Adjust line.name to the actual property name from your API response */}
+                        </option>
+                      ))}
+                    </Input>
                   </FormGroup>
 
                   <FormGroup>
@@ -710,7 +798,7 @@ class Profile extends Component {
             ) {
               this.setState((prevState) => {
                 const updatedEntries = [...prevState.dataEntries2];
-                console.log(updatedEntries);
+
                 const updatedEntry1 = updatedEntries[index] || entry;
                 const updatedEntry2 = updatedEntries[index - 1] || entry;
                 console.log(index);
@@ -763,15 +851,17 @@ class Profile extends Component {
     }
   };
   handleClick_els = async () => {
-    const { inputValues, dataEntries } = this.state;
+    const { inputValues, dataEntries2 ,empLineData,Linestxt } = this.state;
     // Collect data from the input fields
-    const collectedData = dataEntries.map((entry, index) => ({
+    const collectedData = dataEntries2.map((entry, index) => ({
       ...entry,
       labelPartValue: inputValues[`${index}-1`] || "", // Value from label part textbox
       eslTagValue: inputValues[`${index}-2`] || "", // Value from ESL Tag textbox
+      empLine: empLineData[index]?.empLine || "", // Value from Emp line
+      line: Linestxt[index]?.line || "", // Value from line
     }));
     // Log the collected data
-    // console.log("Collected data :", collectedData);
+    console.log("Collected data :", collectedData);
 
     // Convert collected data to JSON format
     const jsonData = JSON.stringify(collectedData);
@@ -781,19 +871,19 @@ class Profile extends Component {
       try {
         // const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
-        //Update ESL Tag    
+        //Update ESL Tag
         const response = await httpClient.patch(
           // Ensure "patch" is lowercase
           `${server.COMPONENT_URL}/esl_addItem`, // URL
           {
             itemId: item.Rack_number, // Access Rack_number from each item
             properties: {
-              MO_DL: item.model, // Access model
-              vendor:item.vendor,
-              Part: item.partname, // Access partname
+              MO_DL: item.Model, // Access model
+              vendor: item.Vendor,
+              Part: item.Part_name, // Access partname
               QTY: item.qty, // Access the first part of the split moNumber
-              ["MO" + item.Number_MO]: "", // Access the first part of the split moNumber
-              Number: item.Number_MO,
+              ["MO" + item.num]: "", // Access the first part of the split moNumber
+              Number: item.num,
               iqcNumber: item.iqcNumber,
               // You can access more parts of the split moNumber as needed (e.g., splittedMoNumber[1])
             },
@@ -804,11 +894,13 @@ class Profile extends Component {
             },
           }
         );
-
-        // Insert data
+     
+      
+        // // Insert data
         // const response_insert = await httpClient.get(
-        //   `${server.ISUUEPART_URL}/insert/${data.Model}/${data.Vendor}/${data.Part_name}/${data.Part_number}/${data.Mold}/{$data.OverL}/{}`
+        //   `${server.ISUUEPART_URL}/insert/${item.Model}/${item.Vendor}/${item.Part_name}/${item.Part_number}/${item.Mold}/${item.MO_number}/${item.IQC_number}/${item.QTY}/${item.empLine}/${item.line}/${item.L_part}/${item.countertxt}/${item.rackNumber}`
         // );
+
         // console.log(response_insert);
 
         console.log(
@@ -837,12 +929,24 @@ class Profile extends Component {
       }
     });
   };
-
-
+  // Fetch Emp lines from the database
+  dataline = async (Model) => {
+    try {
+      const {
+        data: { result },
+      } = await httpClient.get(`${server.ISUUEPART_URL}/Line_model/${Model}`);
+      // const data = await response.json();
+      // console.log(response.data.result);
+      // Ensure data is an array; if not, default to an empty array
+      this.setState({ empLines: result });
+    } catch (error) {
+      console.error("Error fetching Emp lines:", error);
+      this.setState({ empLines: [] }); // Set empLines to an empty array if fetch fails
+    }
+  };
   render() {
     return (
       <>
-      
         <DemoNavbar />
         <main className="profile-page" ref="main">
           <section className="section-profile-cover section-shaped my-0">
@@ -873,7 +977,7 @@ class Profile extends Component {
               </svg>
             </div>
           </section>
-          
+
           <section className="section">
             <Container>
               <Card className="card-profile shadow mt--300">
@@ -1081,9 +1185,5 @@ const styles = {
     padding: "8px",
   },
 };
-// const clearButtonStyle = {
-//   color: "white",
-//   backgroundColor: "transparent",
-//   border: "none",
-// };
+
 export default Profile;

@@ -7,7 +7,6 @@ const constants = require("./constants"); // Adjust the path if necessary
 
 router.get("/Data_racknumber", async (req, res) => {
   try {
-
     let result = await user.sequelize.query(
       // `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]  order by [Model],[Part_name]`
       `SELECT  [ESL_number],[Part_number],[Model] ,[Part_name] ,[Vendor] ,[Mold] ,[Mo_number] ,[IQC_number] ,[Rack_number],[Number] ,[QTY],[Updater] ,[Status],[Timestamp],[ID] FROM [Control_part].[dbo].[Matching_rack_number]   where Mo_number is not null and Status = 'Successful' order by [Model],[Part_name]`
@@ -30,9 +29,9 @@ router.get("/Data_racknumber", async (req, res) => {
   }
 });
 
-
 //Find check_duplicate receive
-router.get("/check_duplicate/:model/:supplier/:part_name/:item_no/:mold/:MOnumber/:IQCnumber",
+router.get(
+  "/check_duplicate/:model/:supplier/:part_name/:item_no/:mold/:MOnumber/:IQCnumber",
   async (req, res) => {
     try {
       const { model, supplier, part_name, item_no, mold, MOnumber, IQCnumber } =
@@ -48,7 +47,6 @@ router.get("/check_duplicate/:model/:supplier/:part_name/:item_no/:mold/:MOnumbe
       // console.log(result);
       var listRawData = [];
       listRawData.push(result[0]);
-     
 
       res.json({
         result: result[0],
@@ -66,7 +64,8 @@ router.get("/check_duplicate/:model/:supplier/:part_name/:item_no/:mold/:MOnumbe
 );
 
 //Select request component_data
-router.get("/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
+router.get(
+  "/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
   async (req, res) => {
     try {
       const { monumber, IQC_number, Part_name, Item_no } = req.params;
@@ -93,7 +92,8 @@ router.get("/component_data/:monumber/:IQC_number/:Part_name/:Item_no",
 );
 
 //Select check
-router.get("/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
+router.get(
+  "/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
   async (req, res) => {
     try {
       const { model, supplier, part_name, item_no, mold, labeltray } =
@@ -129,11 +129,11 @@ router.get("/label_tray/:model/:supplier/:part_name/:item_no/:mold/:labeltray",
 );
 
 //Select check
-router.get("/label_tray_QTY/:model/:supplier/:part_name/:item_no/:mold",
+router.get(
+  "/label_tray_QTY/:model/:supplier/:part_name/:item_no/:mold",
   async (req, res) => {
     try {
-      const { model, supplier, part_name, mold } =
-        req.params;
+      const { model, supplier, part_name, mold } = req.params;
       // Replace "-" with "/" in the model parameter
       const sanitizedModel = model.replace(/-/g, "/");
 
@@ -164,7 +164,6 @@ router.get("/label_tray_QTY/:model/:supplier/:part_name/:item_no/:mold",
   }
 );
 
-
 //Find rack number emtry
 router.get("/rack_number/Clear_rack", async (req, res) => {
   try {
@@ -187,7 +186,8 @@ router.get("/rack_number/Clear_rack", async (req, res) => {
   }
 });
 //Find rack number emtry
-router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
+router.get(
+  "/rack_number/:model/:supplier/:part_name/:item_no/:mold",
   async (req, res) => {
     try {
       const { model, supplier, part_name, item_no, mold } = req.params;
@@ -239,18 +239,18 @@ router.get("/rack_number/:model/:supplier/:part_name/:item_no/:mold",
   }
 );
 //Find rack number emtry
-router.get("/Bafore_L/:model/:supplier/:part_name/:item_no/:mold",
+router.get(
+  "/Bafore_L/:model/:supplier/:part_name/:item_no/:mold",
   async (req, res) => {
     try {
       const { model, supplier, part_name, item_no, mold } = req.params;
       // Replace "-" with "/" in the model parameter
-      let sanitizedModel = ""
-      try{
-         sanitizedModel = model.replace(/-/g, "/");
-      }catch{
-        sanitizedModel = model
+      let sanitizedModel = "";
+      try {
+        sanitizedModel = model.replace(/-/g, "/");
+      } catch {
+        sanitizedModel = model;
       }
-    
 
       let sanitizedMold = mold === "" ? "Mix mold" : mold;
 
@@ -260,7 +260,7 @@ router.get("/Bafore_L/:model/:supplier/:part_name/:item_no/:mold",
 
       var listRawData = [];
       listRawData.push(result[0]);
-     
+
       res.json({
         result: result[0],
         listRawData,
@@ -282,8 +282,8 @@ router.patch("/esl_addItem", async (req, res) => {
     let result = await user.sequelize.query(
       `SELECT [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number],COALESCE(SUM([QTY]),0)  as [QTY] FROM [Control_part].[dbo].[Matching_rack_number] where [Rack_number] = '${itemId}' group by [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number]`
     );
-    const record = result[0][0];
-    console.log("result" +result[0][0]);
+    const record = result;
+    console.log("result 1" + record);
     // Ensure properties.QTY and record.QTY are converted to integers
     const qtyFromProperties = parseInt(properties.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
     const qtyFromRecord = parseInt(record.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
@@ -299,39 +299,41 @@ router.patch("/esl_addItem", async (req, res) => {
     const Model = record.Model || "";
     const vendor = properties.vendor || "";
     const partname = properties.Part || "";
+    console.log("MOnumber" + MOnumber);
     const itemDetails = {
       itemId: itemId,
       properties: {
         MO_DL: properties.MO_DL,
         Part: properties.Part,
-        vendor:properties.vendor,
-        ["MO" + number_txt]: MOnumber,
+        vendor: properties.vendor,
+        ["MO" + number_txt]: "",
         QTY: totalQTY,
       },
     };
 
-    console.log(itemDetails);
+    // console.log(itemDetails);
 
-    // const result_addItem = await axios.patch(
-    //   "http://192.168.101.119:3333/api/public/core/v1/items",
-    //   itemDetails,
-    //   {
-    //     headers: { "Content-Type": "application/json" },
-    //     auth: {
-    //       username: process.env.API_USERNAME || "config",
-    //       password: process.env.API_PASSWORD || "config",
-    //     },
-    //   }
-    // );
-// console.log("vendor"+vendor);
-// console.log("Model"+Model);
-// console.log("partname"+ partname);
+    const result_addItem = await axios.patch(
+      "http://192.168.101.119:3333/api/public/core/v1/items",
+      itemDetails,
+      {
+        headers: { "Content-Type": "application/json" },
+        auth: {
+          username: process.env.API_USERNAME || "config",
+          password: process.env.API_PASSWORD || "config",
+        },
+      }
+    );
+    console.log("vendor" + vendor);
+    console.log("Model" + Model);
+    console.log("partname" + partname);
+    
     //Update status rack
     await user.sequelize.query(
-      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful' , [Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${totalQTY}' where [Rack_number] = '${itemId}' and [Status] = 'Wait' and Number = '${number_txt}'`
+      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful' , [Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${totalQTY}' where [Rack_number] = '${itemId}' and [Status] = 'Successful' and Number = '${number_txt}'`
     );
     //Update status rack
-    let result4  = await user.sequelize.query(
+    let result4 = await user.sequelize.query(
       `Update [Control_part].[dbo].[Received_Part] SET [Status] = 'Kitup_F4' where [Status] IS NULL  and [Part_name]  = '${partname}' and [Supplier] = '${vendor}' and [Model] = '${Model}' and [MO_number]  = '${MOnumber}' and [IQC_lot] = '${iqcNumber}'`
     );
     console.log(result4);
@@ -347,28 +349,128 @@ router.patch("/esl_addItem", async (req, res) => {
     });
   }
 });
-router.get("/insert/:model/:supplier/:part_name/:item_no/:mold/:Monumber/:IQC_lot/:QTY/:Emp:/:ToLine/:EMPLine/:Pack/:OverL",
+
+router.get("/Line_model/:model", async (req, res) => {
+  try {
+    const { model } = req.params;
+    // Replace "-" with "/" in the model parameter
+    let sanitizedModel = "";
+    try {
+      sanitizedModel = model.replace(/-/g, "/");
+    } catch {
+      sanitizedModel = model;
+    }
+    console.log(sanitizedModel);
+    let result = await user.sequelize.query(
+      `SELECT distinct tbL.Line FROM [Component_Master].[dbo].[tbMasterItemNo] tbm INNER JOIN   [Component_Master].[dbo].[Line_for_QRcode] tbL ON tbL.[Item_no] = tbm.[ItemNo] where [ModelShortName] = '${sanitizedModel}' and Line !='' order by tbL.Line `
+    );
+
+    var listRawData = [];
+    listRawData.push(result[0]);
+
+    res.json({
+      result: result[0],
+      listRawData,
+      api_result: "ok",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error,
+      api_result: "nok",
+    });
+  }
+});
+
+router.get(
+  "/insert/:model/:supplier/:part_name/:item_no/:mold/:monumber/:IQCnumber/:qty/:emp/:ToLine/:OverL/:pack/:rackNumber",
   async (req, res) => {
     try {
-      const { model, supplier, part_name, item_no, mold } = req.params;
-      // Replace "-" with "/" in the model parameter
-      let sanitizedModel = ""
-      try{
-         sanitizedModel = model.replace(/-/g, "/");
-      }catch{
-        sanitizedModel = model
+      const {
+        model,
+        supplier,
+        part_name,
+        item_no,
+        mold,
+        monumber,
+        IQCnumber,
+        qty,
+        emp,
+        ToLine,
+        OverL,
+        pack,
+        rackNumber,
+      } = req.params;
+
+      // Get current timestamp
+      const currentDate = new Date();
+      const currentHour = currentDate.getHours();
+      let selectMfgDate;
+
+      // Check if current hour is greater than or equal to 7
+      if (currentHour >= 7) {
+        // Use today's date
+        selectMfgDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate()
+        );
+      } else {
+        // Use the previous day's date
+        selectMfgDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - 1
+        );
       }
-    
 
-      let sanitizedMold = mold === "" ? "Mix mold" : mold;
+      // Format dates as strings
+      const date_show = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+      const insert_selectMfgDate = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+      const Time_Date_now = new Date().toISOString().slice(11, 19); // Format as HH:MM:SS
+      const Timestemp = now.toISOString().slice(0, 19).replace("T", " "); // Format as 'YYYY-MM-DD HH:MM:SS'
+      const querydata ="INSERT INTO [Control_part].[dbo].[Issue_part_KitupCR] ([Model],[Part_name],[Item_no],[Supplier],[MO_number],[IQC_lot],[QTY],[Emp],[To_Line],[Emp_Line],[MfgDate],[DateTime_KitupCR],[Status],[Over_issue_L],[Pack],[Mold],[Remark]) values ('?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?')";
+      try {
+        // Assuming 'user' is your Sequelize model
+        const result = await user.sequelize.query(querydata, {
+          replacements: [
+            model,
+            part_name,
+            item_no,
+            supplier,
+            monumber,
+            IQCnumber,
+            qty,
+            "T7436",
+            ToLine,
+            emp,
+            insert_selectMfgDate,
+            Timestemp,
+            "Succeed",
+            OverL,
+            pack,
+            mold,
+            rackNumber,
+          ],
+        });
+        console.log("Insert result:", result);
+        // Send success response
+        res.send("Data inserted successfully");
+      } catch (error) {
+        console.error("Error inserting data:", error); // Log the detailed error
+        // Return a 500 status with the error message
+        res.status(500).send("Error inserting data: " + error.message);
+      }
 
-      let result = await user.sequelize.query(
-        `SELECT TOP(1) [Over_issue_L] FROM [Control_part].[dbo].[Issue_part_KitupCR] where [Model] ='${sanitizedModel}' and [Supplier] ='${supplier}' and Part_name ='${part_name}' and Item_no ='${item_no}' and Mold ='${sanitizedMold}' order by [DateTime_KitupCR] DESC `
-      );
+      // let sanitizedMold = mold === "" ? "Mix mold" : mold;
+
+      // let result = await user.sequelize.query(
+      //   `SELECT TOP(1) [Over_issue_L] FROM [Control_part].[dbo].[Issue_part_KitupCR] where [Model] ='${sanitizedModel}' and [Supplier] ='${supplier}' and Part_name ='${part_name}' and Item_no ='${item_no}' and Mold ='${sanitizedMold}' order by [DateTime_KitupCR] DESC `
+      // );
 
       var listRawData = [];
       listRawData.push(result[0]);
-     
+
       res.json({
         result: result[0],
         listRawData,

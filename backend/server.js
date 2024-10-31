@@ -8,16 +8,16 @@ const { log } = require("console");
 
 app.use(cors());
 
-// const corsOptions = {
-//   origin: 'http://10.120.122.28:2017', 
-//   optionsSuccessStatus: 200,
-// };
-// app.use(cors(corsOptions));
-
 const corsOptions = {
-  origin: 'http://192.168.101.67:2031', 
+  origin: 'http://localhost:3000', 
   optionsSuccessStatus: 200,
 };
+app.use(cors(corsOptions));
+
+// const corsOptions = {
+//   origin: 'http://192.168.101.67:2031', 
+//   optionsSuccessStatus: 200,
+// };
 app.use(cors(corsOptions));
 
 
@@ -40,10 +40,6 @@ app.use("/api/receive_part", require("./api/api_receive_part"));
 app.use("/api/master", require("./api/api_master"));
 app.use("/api/issue_part", require("./api/api_issue_part "));
 
-
-//NAS
-// const Url = "192.168.101.13";
-// const MailUrl = "192.168.101.120"
 
 
 const storage = multer.diskStorage({

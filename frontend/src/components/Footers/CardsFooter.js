@@ -40,24 +40,24 @@ class CardsFooter extends React.Component {
           <Container className="container-lg">
             <Row>
               <Col className="mb-5 mb-md-0" md="6">
-                <Card className="card-lift--hover shadow border-0">
+                {/* <Card className="card-lift--hover shadow border-0">
                   <Link to="/landing-page">
                     <CardImg
                       alt="..."
                       src={require("assets/img/theme/landing.jpg")}
                     />
                   </Link>
-                </Card>
+                </Card> */}
               </Col>
               <Col className="mb-5 mb-lg-0" md="6">
-                <Card className="card-lift--hover shadow border-0">
+                {/* <Card className="card-lift--hover shadow border-0">
                   <Link to="/profile-page">
                     <CardImg
                       alt="..."
                       src={require("assets/img/theme/profile.jpg")}
                     />
                   </Link>
-                </Card>
+                </Card> */}
               </Col>
             </Row>
           </Container>
@@ -68,11 +68,11 @@ class CardsFooter extends React.Component {
                   Thank you for supporting us!
                 </h3>
                 <h4 className="mb-0 font-weight-light">
-                  Let's get in touch on any of these platforms.
+                May you enjoy your work.
                 </h4>
               </Col>
               <Col className="text-lg-center btn-wrapper" lg="6">
-                <Button
+                {/* <Button
                   className="btn-icon-only rounded-circle"
                   color="twitter"
                   href="https://twitter.com/creativetim"
@@ -127,7 +127,7 @@ class CardsFooter extends React.Component {
                 </Button>
                 <UncontrolledTooltip delay={0} target="tooltip495507257">
                   Star on Github
-                </UncontrolledTooltip>
+                </UncontrolledTooltip> */}
               </Col>
             </Row>
             <hr />

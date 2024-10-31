@@ -32,7 +32,7 @@ import Register from "views/examples/Register.js";
 import Receive from "views/Control_component_part/Receive_component_part.js";
 import Issue  from "views/Control_component_part/Issue _component_part.js";     
 import Msrack  from "views/Control_component_part/Master_racknumber.js";
-
+import Mspart  from "views/Control_component_part/Master_component.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -48,6 +48,7 @@ root.render(
       <Route path="/Receive-page" exact element={<Receive />} />
       <Route path="/Issue-page" exact element={<Issue />} />
       <Route path="/racknumber" exact element={<Msrack />} />
+      <Route path="/Master-part" exact element={<Mspart />} />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

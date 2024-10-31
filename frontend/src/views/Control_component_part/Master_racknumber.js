@@ -240,7 +240,8 @@ class Profile extends Component {
   };
   // Method to handle delete action
   handleDelete = async (ID,QTY) => {
-    if(QTY == ""){
+   
+    if(QTY === "" || QTY === null){
       try {
         // Send a DELETE request to your backend
         await httpClient.delete(
@@ -249,8 +250,13 @@ class Profile extends Component {
         // console.log(result);
         // Optionally, refresh the data after deletion
         this.doGetDataReport();
-  
-        alert(`Record with ESL number ${ID} deleted successfully!`);
+        Swal.fire({
+          icon: "success",
+          title: `Record with ESL number ${ID} deleted successfully!`,
+          text: "Ok, Got it!",
+          confirmButtonText: "Close",
+        });
+      
       } catch (error) {
         console.error("Error deleting data:", error);
         alert(`Error deleting data: ${error.message}`);
@@ -267,15 +273,14 @@ class Profile extends Component {
   };
 
   // Render method to display the table
-
   renderTable = () => {
     const { Raw_Dat } = this.state;
-
+  
     // Check if Raw_Dat contains data
     if (Raw_Dat.length === 0) {
       return <p>No data available</p>;
     }
-
+  
     return (
       <div className="content">
         <div className="container-fluid">
@@ -283,8 +288,14 @@ class Profile extends Component {
             <div className="row"></div>
             <div className="col-12">
               <div
-                className="card-body table-responsive p-0"
-                style={{ height: "100%" }}
+                className="card-body table-responsive"
+                style={{
+                  height: "600px", // Set a fixed height to enable vertical scrolling
+                  width: "100%",
+                  overflowY: "auto", // Enable vertical scrolling
+                  overflowX: "auto", // Enable horizontal scrolling
+                  position: "relative",
+                }}
               >
                 <table
                   className="table table-head-fixed text-nowrap table-hover"
@@ -292,28 +303,48 @@ class Profile extends Component {
                 >
                   <thead>
                     <tr align="center">
-                      <th style={styles.headerCell}>Actions</th>{" "}
-                      {/* New Actions column */}
-                      <th style={styles.headerCell}>ESL_number</th>
-                      <th style={styles.headerCell}>Part_number</th>
-                      <th style={styles.headerCell}>Model</th>
-                      <th style={styles.headerCell}>Mold</th>
-                      <th style={styles.headerCell}>Part_name</th>
-                      <th style={styles.headerCell}>Vendor</th>
-                      <th style={styles.headerCell}>Updater</th>
-                      <th style={styles.headerCell}>Rack_number</th>
-                      <th style={styles.headerCell}>QTY</th>
-                      {/* <th style={styles.headerCell}>MO</th> */}
-                      <th style={styles.headerCell}>ID</th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, left: 0, backgroundColor: "#fff", zIndex: 3 }}>
+                        Actions
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        ESL_number
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Part_number
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Model
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Mold
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Part_name
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Vendor
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Updater
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        Rack_number
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        QTY
+                      </th>
+                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                        ID
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {Raw_Dat.map((item, index) => (
                       <tr key={index}>
-                        <td style={styles.cell}>
+                        <td style={{ ...styles.cell, position: "sticky", left: 0, backgroundColor: "#f8f9fa", zIndex: 1 }}>
                           <button
                             className="btn btn-danger"
-                            onClick={() => this.handleDelete(item.ID,item.QTY)} // Pass ESL_number to delete
+                            onClick={() => this.handleDelete(item.ID, item.QTY)}
                           >
                             Delete
                           </button>
@@ -327,7 +358,6 @@ class Profile extends Component {
                         <td style={styles.cell}>{item.Updater}</td>
                         <td style={styles.cell}>{item.Rack_number}</td>
                         <td style={styles.cell}>{item.QTY}</td>
-                        {/* <td style={styles.cell}>{item.Mo_number}</td> */}
                         <td style={styles.cell}>{item.ID}</td>
                       </tr>
                     ))}
@@ -340,6 +370,7 @@ class Profile extends Component {
       </div>
     );
   };
+  
 
   formatDate = (date) => {
     const year = date.getFullYear();
@@ -355,131 +386,140 @@ class Profile extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const formattedTimeNow = this.formatDate(new Date());
-
-    this.setState({ timenow: formattedTimeNow }, async () => {
-      const {
-        selectedpart_numbers,
-        selectedModel,
-        selectedpartname,
-        selectevendor,
-        selectemold,
-        rackNumber,
-        timenow,
-        scannedValue,
-        limit,
-      } = this.state;
-
-      // const data = {
-      //   ESL_barcode: scannedValue, // Ensure this is set
-      //   Part_number: selectedpart_numbers,
-      //   Model: selectedModel,
-      //   Part_name: selectedpartname,
-      //   Vendor: selectevendor,
-      //   Mold: selectemold,
-      //   Rack_number: rackNumber, // Check the correct case here
-      //   Updater: "T7436",
-      //   Timestamp: timenow, // Ensure this is correctly formatted
-      // };
-    
-      try {
-        for (let i = 1; i <= limit; i++) {
-          const data = {
-            ESL_number: scannedValue, // Ensure this is set
-            Part_number: selectedpart_numbers,
-            Model: selectedModel,
-            Part_name: selectedpartname,
-            Vendor: selectevendor,
-            Mold: selectemold,
-            Rack_number: rackNumber, // Check the correct case here
-            Updater: "T7436",
-            Timestamp: timenow, // Ensure this is correctly formatted
-            Number_limit: i,
-          };
-
-          const response = await httpClient.post(
-            server.MASTER_COMPONENT_URL + `/insert-data`,
-            data
-          );
-
-          console.log("Response:", response.data); // Log the response from the server
-          Swal.fire({
-            icon: "success",
-            title: `Rack number ${data.Rack_number} inserted successfully!`,
-            text: "Ok, Got it!",
-            confirmButtonText: "Close",
-          });
-          
-          // alert();
-        }
-        // Clear input fields
-        this.clearInput();
-        this.doGetDataReport();
-      } catch (error) {
-        console.error("Error inserting data:", error);
-        if (error.response && error.response.status === 500) {
-          
-          Swal.fire({
-            title: "Error!",
-            icon: "error",
-            text: "Ok, Got it!",
-            confirmButtonText: "Close",
-          });
-        } else if (error.response) {
-         
-          Swal.fire({
-            title: "Error!",
-            icon:  `Error inserting data: ${error.response.status} - ${error.response.statusText}`,
-            text: "Ok, Got it!",
-            confirmButtonText: "Close",
-          });
-        } else {
-          Swal.fire({
-            title: "Error!",
-            icon: `Error inserting data: ${error.message}`,
-            text: "Ok, Got it!",
-            confirmButtonText: "Close",
-          });
-          
-        }
-      }  try {
-        const splittedModel = selectedModel.split("-"); // Modify the delimiter as needed
-        const response = await httpClient.patch(
-          // Ensure "patch" is lowercase
-          `${server.MASTER_COMPONENT_URL}/esl_linkESL`, // URL
-          {
-            barcode: scannedValue, // Access Rack_number from each item
-            properties: {
-              barcode: scannedValue,
-              // MO_DL: selectedModel,
-              // Part: selectedpartname,
-              // PART_NO: selectedpart_numbers,
-              // Vendor: selectevendor,
-              itemId: rackNumber,
-              // ITEMIPF: "Tag2",
-            },
-          },
-          {
-            headers: {
-              "Content-Type": "application/json", // Ensure content type is set to JSON
-            },
+    const pattern = /^[A-Za-z][1-3]{2}$/;
+    if (pattern.test(this.state.rackNumber)) {
+      console.log("Valid input:", this.state.rackNumber);
+      this.setState({ timenow: formattedTimeNow }, async () => {
+        const {
+          selectedpart_numbers,
+          selectedModel,
+          selectedpartname,
+          selectevendor,
+          selectemold,
+          rackNumber,
+          timenow,
+          scannedValue,
+          limit,
+        } = this.state;
+  
+        // const data = {
+        //   ESL_barcode: scannedValue, // Ensure this is set
+        //   Part_number: selectedpart_numbers,
+        //   Model: selectedModel,
+        //   Part_name: selectedpartname,
+        //   Vendor: selectevendor,
+        //   Mold: selectemold,
+        //   Rack_number: rackNumber, // Check the correct case here
+        //   Updater: "T7436",
+        //   Timestamp: timenow, // Ensure this is correctly formatted
+        // };
+      
+        try {
+          for (let i = 1; i <= limit; i++) {
+            const data = {
+              ESL_number: scannedValue, // Ensure this is set
+              Part_number: selectedpart_numbers,
+              Model: selectedModel,
+              Part_name: selectedpartname,
+              Vendor: selectevendor,
+              Mold: selectemold,
+              Rack_number: rackNumber, // Check the correct case here
+              Updater: "T7436", // user
+              Timestamp: timenow, // Ensure this is correctly formatted
+              Number_limit: i,
+            };
+  
+            const response = await httpClient.post(
+              server.MASTER_COMPONENT_URL + `/insert-data`,
+              data
+            );
+  
+            console.log("Response:", response.data); // Log the response from the server
+            Swal.fire({
+              icon: "success",
+              title: `Rack number ${data.Rack_number} inserted successfully!`,
+              text: "Ok, Got it!",
+              confirmButtonText: "Close",
+            });
+            
+            // alert();
           }
-          
-        );
-        console.log("API1"+response);
-        console.log(`PATCH response for item ${rackNumber}:`, response.data);
-      } catch (error) {
-        console.error(
-          `Error during PATCH request for item ${rackNumber}:`,
-          error
-        );
-      }
-
-    });
+          // Clear input fields
+          this.clearInput();
+          this.doGetDataReport();
+        } catch (error) {
+          console.error("Error inserting data:", error);
+          if (error.response && error.response.status === 500) {
+            
+            Swal.fire({
+              title: "Error!",
+              icon: "error",
+              text: "Ok, Got it!",
+              confirmButtonText: "Close",
+            });
+          } else if (error.response) {
+           
+            Swal.fire({
+              title: "Error!",
+              icon:  `Error inserting data: ${error.response.status} - ${error.response.statusText}`,
+              text: "Ok, Got it!",
+              confirmButtonText: "Close",
+            });
+          } else {
+            Swal.fire({
+              title: "Error!",
+              icon: `Error inserting data: ${error.message}`,
+              text: "Ok, Got it!",
+              confirmButtonText: "Close",
+            });
+            
+          }
+        }  try {
+          // const splittedModel = selectedModel.split("-"); // Modify the delimiter as needed
+          const response = await httpClient.patch(
+            // Ensure "patch" is lowercase
+            `${server.MASTER_COMPONENT_URL}/esl_linkESL`, // URL
+            {
+              barcode: scannedValue, // Access Rack_number from each item
+              properties: {
+                barcode: scannedValue,
+                // MO_DL: selectedModel,
+                // Part: selectedpartname,
+                // PART_NO: selectedpart_numbers,
+                // Vendor: selectevendor,
+                itemId: rackNumber,
+                // ITEMIPF: "Tag2",
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json", // Ensure content type is set to JSON
+              },
+            }
+            
+          );
+          console.log("API1"+response);
+          console.log(`PATCH response for item ${rackNumber}:`, response.data);
+        } catch (error) {
+          console.error(
+            `Error during PATCH request for item ${rackNumber}:`,
+            error
+          );
+        }
+  
+      });
+    } else {
+      alert("Invalid input. The format should be a letter followed by two digits (1-3).");
+      
+    }
+   
   };
 
   // Handle input change and convert to uppercase
   handleInputChange = (e) => {
     const rackNumber = e.target.value.toUpperCase(); // Convert input to uppercase
+
+    const pattern = /^[A-Za-z][1-3]{2}$/;
     this.setState({ rackNumber }); // Update the state with the new value
   };
 
@@ -785,7 +825,7 @@ class Profile extends Component {
                           type="text" // `type="text"` is more appropriate for general text input
                           id="rackNumberInput"
                           name="rackNumber"
-                          maxLength={4} // Limit input to 4 characters
+                          maxLength={3} // Limit input to 4 characters
                           value={this.state.rackNumber} // Controlled input with state
                           onChange={this.handleInputChange} // Update state on change
                           style={{ fontSize: "20px", width: "470px" }}

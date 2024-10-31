@@ -41,10 +41,10 @@ class SimpleFooter extends React.Component {
                   Thank you for supporting us!
                 </h3>
                 <h4 className=" mb-0 font-weight-light">
-                  Let's get in touch on any of these platforms.
+                May you enjoy your work.
                 </h4>
               </Col>
-              <Col className="text-lg-center btn-wrapper" lg="6">
+              {/* <Col className="text-lg-center btn-wrapper" lg="6">
                 <Button
                   className="btn-icon-only rounded-circle"
                   color="twitter"
@@ -101,30 +101,30 @@ class SimpleFooter extends React.Component {
                 <UncontrolledTooltip delay={0} target="tooltip495507257">
                   Star on Github
                 </UncontrolledTooltip>
-              </Col>
+              </Col> */}
             </Row>
             <hr />
             <Row className=" align-items-center justify-content-md-between">
               <Col md="6">
                 <div className=" copyright">
                   © {new Date().getFullYear()}{" "}
-                  <a
+                  {/* <a
                     href="https://www.creative-tim.com?ref=adsr-footer"
                     target="_blank"
                   >
                     Creative Tim
-                  </a>
-                  .
+                  </a> */}
+                  
                 </div>
               </Col>
-              <Col md="6">
+              {/* <Col md="6">
                 <Nav className=" nav-footer justify-content-end">
                   <NavItem>
                     <NavLink
                       href="https://www.creative-tim.com?ref=adsr-footer"
                       target="_blank"
                     >
-                      Creative Tim
+                      
                     </NavLink>
                   </NavItem>
                   <NavItem>
@@ -152,7 +152,7 @@ class SimpleFooter extends React.Component {
                     </NavLink>
                   </NavItem>
                 </Nav>
-              </Col>
+              </Col> */}
             </Row>
           </Container>
         </footer>

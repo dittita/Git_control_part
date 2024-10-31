@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 
 // reactstrap components
 import {
-  Modal, 
+  Modal,
   Button,
   Card,
   Container,
@@ -360,7 +360,6 @@ class Profile extends Component {
 
   // }
   renderDataEntries = () => {
-    
     return (
       <div>
         {this.state.dataEntries.length > 0 ? (
@@ -453,11 +452,11 @@ class Profile extends Component {
       labelPartValue: inputValues[`${index}-1`] || "", // Value from label part textbox
       eslTagValue: inputValues[`${index}-2`] || "", // Value from ESL Tag textbox
     }));
-  
+
     // Convert collected data to JSON format
     const jsonData = JSON.stringify(collectedData);
     console.log("jsonData data :", jsonData);
-  
+
     // Loop through collected data and send PATCH requests for each entry
     for (const item of collectedData) {
       if (item.labelPartStatus === "error") {
@@ -471,11 +470,11 @@ class Profile extends Component {
         // Stop further processing for this item
         return;
       }
-  
+
       try {
         const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
-  
+
         const response = await httpClient.patch(
           `${server.COMPONENT_URL}/esl_addItem`, // URL
           {
@@ -496,9 +495,12 @@ class Profile extends Component {
             },
           }
         );
-        console.log(`PATCH response for item ${item.Rack_number}:`, response.data);
+        console.log(
+          `PATCH response for item ${item.Rack_number}:`,
+          response.data
+        );
         this.clearInput();
-  
+
         // Show success message for each valid item
         Swal.fire({
           icon: "success",
@@ -507,7 +509,10 @@ class Profile extends Component {
           confirmButtonText: "Close",
         });
       } catch (error) {
-        console.error(`Error during PATCH request for item ${item.Rack_number}:`, error);
+        console.error(
+          `Error during PATCH request for item ${item.Rack_number}:`,
+          error
+        );
         Swal.fire({
           title: "Error!",
           icon: "error",
@@ -517,7 +522,6 @@ class Profile extends Component {
       }
     }
   };
-  
 
   render() {
     const {
@@ -751,8 +755,12 @@ class Profile extends Component {
 
                     <br></br>
                     <br></br>
-                    <Row>
-                      <Col md="4">
+                    <Row className="justify-content-center">
+                      {" "}
+                      {/* Centering the Row */}
+                      <Col md="4" className="text-center">
+                        {" "}
+                        {/* Center text in the column */}
                         <Button
                           block
                           className="mb-3"
@@ -824,7 +832,9 @@ class Profile extends Component {
                           </div>
                         </Modal>
                       </Col>
-                      <Col md="4">
+                      <Col md="4" className="text-center">
+                        {" "}
+                        {/* Center text in the column */}
                         <Button
                           block
                           className="mb-3"
@@ -877,18 +887,7 @@ class Profile extends Component {
                   </ul>
                   <div className="mt-5 py-5 border-top text-center">
                     <Row className="justify-content-center">
-                      <Col lg="9">
-                        <p>
-                          An artist of considerable range, Ryan — the name taken
-                          by Melbourne-raised, Brooklyn-based Nick Murphy —
-                          writes, performs and records all of his own music,
-                          giving it a warm, intimate feel with a solid groove
-                          structure. An artist of considerable range.
-                        </p>
-                        <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                          Show more
-                        </a>
-                      </Col>
+                      <Col lg="9"></Col>
                     </Row>
                   </div>
                 </div>

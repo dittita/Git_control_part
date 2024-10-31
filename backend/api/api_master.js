@@ -341,4 +341,35 @@ router.patch("/esl_addItem", async (req, res) => {
   }
 });
 
+
+
+router.get("/Data_master_part", async (req, res) => {
+  try {
+    // let { startDate, finishDate, process_pe, line } = req.params;
+
+    // Convert 'undefined' string to empty string
+    // if (line === 'undefined') {
+    //   line = '';
+    // }
+
+    let result = await user.sequelize.query(
+      `SELECT [Model],[Part_name],[Supplier],[Mold],[Part_number_NMB] ,[Part_number_Seagate] ,[Qty_per_pack],[Qty_per_bundle]  FROM [Control_part].[dbo].[Master_finalPart] order by Model `
+    );
+
+    var listRawData = [];
+    listRawData.push(result[0]);
+
+    res.json({
+      result: result[0],
+      listRawData,
+      api_result: "ok",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error,
+      api_result: "nok",
+    });
+  }
+});
 module.exports = router;
