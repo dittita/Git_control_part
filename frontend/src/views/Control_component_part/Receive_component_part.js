@@ -40,6 +40,7 @@ class Profile extends Component {
       isModalOpen: false, // Example modal state
       dataEntries: [], // Array to store objects of each entry
       Number_MO: "",
+      Emp: "",
     };
   }
   toggleModal = (stateKey) => {
@@ -151,6 +152,7 @@ class Profile extends Component {
       Rack_number,
       ESL_number,
       Number_MO,
+      Emp
     } = this.state;
 
     const newDataEntry = {
@@ -194,6 +196,7 @@ class Profile extends Component {
       Issue_part_KitupF4: "",
       counter: 0,
       Number_MO: "",
+      Emp:"",
     });
     this.clearDataEntries();
 
@@ -487,6 +490,7 @@ class Profile extends Component {
               ["MO" + item.Number_MO]: splittedMoNumber[0], // Access the first part of the split moNumber
               Number: item.Number_MO,
               iqcNumber: item.iqcNumber,
+              Emp:this.state.Emp,
             },
           },
           {
@@ -642,6 +646,28 @@ class Profile extends Component {
                     >
                       <i className="ni location_pin mr-2" />
                       Please scan the QR code for the MO number.
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        {" "}
+                        {/* Center the input */}
+                        <Input
+                          className="form-control-alternative"
+                          placeholder=" Emp"
+                          type="text"
+                          value={this.state.Emp} // Set the input value from state
+                          onChange={(e) =>
+                            this.setState({ Emp: e.target.value.toUpperCase() })
+                          } // Update state on change
+                          style={{
+                            fontSize: "20px",
+                            width: "300px",
+                            textTransform: "uppercase",
+                            textAlign: "center",
+                            color: "green",
+                          }} // Adjust width as needed
+                        />
+                      </div>
                     </div>
 
                     <FormGroup>
@@ -767,7 +793,11 @@ class Profile extends Component {
                           color="success"
                           type="button"
                           onClick={() => {
-                            this.toggleModal("notificationModal");
+                            if (this.state.Emp.trim() !== "") { // Check if Emp is not empty
+                              this.toggleModal("notificationModal");
+                            } else {
+                              alert("Please input Emp before submitting."); // Alert if Emp is empty
+                            }
                           }}
                         >
                           Submit

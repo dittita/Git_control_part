@@ -66,49 +66,12 @@ class Login extends React.Component {
                   <Card className="bg-secondary shadow border-0">
                     <CardHeader className="bg-white pb-5">
                       <div className="text-muted text-center mb-3">
-                        <small>Sign in with</small>
+                        <small>Sign in with Emp</small>
                       </div>
                       <div className="btn-wrapper text-center">
-                        <Button
-                          className="btn-neutral btn-icon"
-                          color="default"
-                          href="#pablo"
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <span className="btn-inner--icon mr-1">
-                            <img
-                              alt="..."
-                              src={
-                                require("assets/img/icons/common/github.svg")
-                                  .default
-                              }
-                            />
-                          </span>
-                          <span className="btn-inner--text">Github</span>
-                        </Button>
-                        <Button
-                          className="btn-neutral btn-icon ml-1"
-                          color="default"
-                          href="#pablo"
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <span className="btn-inner--icon mr-1">
-                            <img
-                              alt="..."
-                              src={
-                                require("assets/img/icons/common/google.svg")
-                                  .default
-                              }
-                            />
-                          </span>
-                          <span className="btn-inner--text">Google</span>
-                        </Button>
                       </div>
                     </CardHeader>
                     <CardBody className="px-lg-5 py-lg-5">
-                      <div className="text-center text-muted mb-4">
-                        <small>Or sign in with credentials</small>
-                      </div>
                       <Form role="form">
                         <FormGroup className="mb-3">
                           <InputGroup className="input-group-alternative">
@@ -117,7 +80,7 @@ class Login extends React.Component {
                                 <i className="ni ni-email-83" />
                               </InputGroupText>
                             </InputGroupAddon>
-                            <Input placeholder="Email" type="email" />
+                            <Input placeholder="Emp" type="email" />
                           </InputGroup>
                         </FormGroup>
                         <FormGroup>

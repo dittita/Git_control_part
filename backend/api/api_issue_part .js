@@ -279,17 +279,17 @@ router.patch("/esl_addItem", async (req, res) => {
   try {
     const { itemId, properties } = req.body;
 
-    let result = await user.sequelize.query(
+    const result = await user.sequelize.query(
       `SELECT [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number],COALESCE(SUM([QTY]),0)  as [QTY] FROM [Control_part].[dbo].[Matching_rack_number] where [Rack_number] = '${itemId}' group by [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number]`
     );
     const record = result;
-    console.log("result 1" + record);
+    console.log("record 1" + record.QTY);
     // Ensure properties.QTY and record.QTY are converted to integers
     const qtyFromProperties = parseInt(properties.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
     const qtyFromRecord = parseInt(record.QTY, 10) || 0; // Convert to integer, default to 0 if NaN
     console.log(properties);
     // Calculate totalQTY as an integer
-    const totalQTY = qtyFromProperties + qtyFromRecord;
+    const totalQTY = qtyFromProperties - qtyFromRecord;
     const MO1_txt = properties.MO1 || "";
     const MO2_txt = properties.MO2 || "";
     const MO3_txt = properties.MO3 || "";
@@ -299,7 +299,7 @@ router.patch("/esl_addItem", async (req, res) => {
     const Model = record.Model || "";
     const vendor = properties.vendor || "";
     const partname = properties.Part || "";
-    console.log("MOnumber" + MOnumber);
+  
     const itemDetails = {
       itemId: itemId,
       properties: {
@@ -311,7 +311,7 @@ router.patch("/esl_addItem", async (req, res) => {
       },
     };
 
-    // console.log(itemDetails);
+    console.log(itemDetails);
 
     const result_addItem = await axios.patch(
       "http://192.168.101.119:3333/api/public/core/v1/items",
@@ -330,13 +330,10 @@ router.patch("/esl_addItem", async (req, res) => {
     
     //Update status rack
     await user.sequelize.query(
-      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = 'Successful' , [Mo_number] = '${MOnumber}',[IQC_number] = '${iqcNumber}',[QTY] = '${totalQTY}' where [Rack_number] = '${itemId}' and [Status] = 'Successful' and Number = '${number_txt}'`
+      `Update [Control_part].[dbo].[Matching_rack_number]  set [Status] = null , [Mo_number] = null ,[IQC_number]  = null ,[QTY] = null  where [Rack_number] = '${itemId}' and [Status] = 'Successful' and Number = '${number_txt}'`
     );
-    //Update status rack
-    let result4 = await user.sequelize.query(
-      `Update [Control_part].[dbo].[Received_Part] SET [Status] = 'Kitup_F4' where [Status] IS NULL  and [Part_name]  = '${partname}' and [Supplier] = '${vendor}' and [Model] = '${Model}' and [MO_number]  = '${MOnumber}' and [IQC_lot] = '${iqcNumber}'`
-    );
-    console.log(result4);
+    
+
     res.json({
       // result_addItem: result_addItem.data,
       api_result: constants.OK,
@@ -383,7 +380,7 @@ router.get("/Line_model/:model", async (req, res) => {
 });
 
 router.get(
-  "/insert/:model/:supplier/:part_name/:item_no/:mold/:monumber/:IQCnumber/:qty/:emp/:ToLine/:OverL/:pack/:rackNumber",
+  "/insert/:model/:supplier/:part_name/:item_no/:mold/:monumber/:IQCnumber/:qty/:emp/:ToLine/:OverL/:pack/:rackNumber/:emp_Kitup",
   async (req, res) => {
     try {
       const {
@@ -400,6 +397,7 @@ router.get(
         OverL,
         pack,
         rackNumber,
+        emp_Kitup,
       } = req.params;
 
       // Get current timestamp
@@ -428,8 +426,13 @@ router.get(
       const date_show = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
       const insert_selectMfgDate = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
       const Time_Date_now = new Date().toISOString().slice(11, 19); // Format as HH:MM:SS
-      const Timestemp = now.toISOString().slice(0, 19).replace("T", " "); // Format as 'YYYY-MM-DD HH:MM:SS'
-      const querydata ="INSERT INTO [Control_part].[dbo].[Issue_part_KitupCR] ([Model],[Part_name],[Item_no],[Supplier],[MO_number],[IQC_lot],[QTY],[Emp],[To_Line],[Emp_Line],[MfgDate],[DateTime_KitupCR],[Status],[Over_issue_L],[Pack],[Mold],[Remark]) values ('?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?','?')";
+      const Timestemp = currentDate.toISOString().slice(0, 19).replace("T", " ");
+      const querydata = `
+      INSERT INTO [Control_part].[dbo].[Issue_part_KitupCR] 
+      ([Model], [Part_name], [Item_no], [Supplier], [MO_number], [IQC_lot], [QTY], [Emp], [To_Line], [Emp_Line], [MfgDate], [DateTime_KitupCR], [Status], [Over_issue_L], [Pack], [Mold], [Remark])
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    
       try {
         // Assuming 'user' is your Sequelize model
         const result = await user.sequelize.query(querydata, {
@@ -441,7 +444,7 @@ router.get(
             monumber,
             IQCnumber,
             qty,
-            "T7436",
+            emp_Kitup,
             ToLine,
             emp,
             insert_selectMfgDate,

@@ -215,6 +215,30 @@ class DemoNavbar extends React.Component {
                       </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
+
+                  
+                  {/* <UncontrolledDropdown nav>
+                    <DropdownToggle nav>
+                      <i className="ni ni-collection d-lg-none mr-1" />
+                      <span className="nav-link-inner--text">User</span>
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem to="/login-page" tag={Link}>
+
+                      <div className="d-flex align-items-center">
+                          <div className="icon icon-shape bg-gradient-primary rounded-circle text-white">
+                          <i class="fa fa-battery-quarter" aria-hidden="true"></i>
+                          </div>
+                          <h6 className="heading text-primary mb-md-1 ml-2">
+                          Login
+                          </h6>
+                        </div>
+                        
+                      </DropdownItem>
+                
+                    </DropdownMenu>
+                  </UncontrolledDropdown> */}
+
                 </Nav>
 
                 {/* <Nav className="align-items-lg-center ml-lg-auto" navbar>

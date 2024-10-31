@@ -215,6 +215,33 @@ router.patch("/esl_addItem", async (req, res) => {
     let result = await user.sequelize.query(
       `SELECT [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number],COALESCE(SUM([QTY]),0)  as [QTY] FROM [Control_part].[dbo].[Matching_rack_number] where [Rack_number] = '${itemId}' group by [ESL_number],[Part_number],[Model],[Part_name],[Vendor],[Mold],[Rack_number]`
     );
+    const currentDate = new Date();
+    const currentHour = currentDate.getHours();
+    let selectMfgDate;
+
+    // Check if current hour is greater than or equal to 7
+    if (currentHour >= 7) {
+      // Use today's date
+      selectMfgDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate()
+      );
+    } else {
+      // Use the previous day's date
+      selectMfgDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() - 1
+      );
+    }
+
+    // Format dates as strings
+    const date_show = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+    const insert_selectMfgDate = selectMfgDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+    const Time_Date_now = new Date().toISOString().slice(11, 19); // Format as HH:MM:SS
+    const Timestemp = currentDate.toISOString().slice(0, 19).replace("T", " ");
+
     const record = result[0][0];
     console.log("result" +result[0][0]);
     // Ensure properties.QTY and record.QTY are converted to integers
@@ -232,6 +259,7 @@ router.patch("/esl_addItem", async (req, res) => {
     const Model = record.Model || "";
     const vendor = properties.vendor || "";
     const partname = properties.Part || "";
+    const Emp = properties.Emp || "";
     const itemDetails = {
       itemId: itemId,
       properties: {
@@ -245,17 +273,17 @@ router.patch("/esl_addItem", async (req, res) => {
 
     console.log(itemDetails);
 
-    // const result_addItem = await axios.patch(
-    //   "http://192.168.101.119:3333/api/public/core/v1/items",
-    //   itemDetails,
-    //   {
-    //     headers: { "Content-Type": "application/json" },
-    //     auth: {
-    //       username: process.env.API_USERNAME || "config",
-    //       password: process.env.API_PASSWORD || "config",
-    //     },
-    //   }
-    // );
+    const result_addItem = await axios.patch(
+      "http://192.168.101.119:3333/api/public/core/v1/items",
+      itemDetails,
+      {
+        headers: { "Content-Type": "application/json" },
+        auth: {
+          username: process.env.API_USERNAME || "config",
+          password: process.env.API_PASSWORD || "config",
+        },
+      }
+    );
 // console.log("vendor"+vendor);
 // console.log("Model"+Model);
 // console.log("partname"+ partname);
@@ -265,7 +293,7 @@ router.patch("/esl_addItem", async (req, res) => {
     );
     //Update status rack
     let result4  = await user.sequelize.query(
-      `Update [Control_part].[dbo].[Received_Part] SET [Status] = 'Kitup_F4' where [Status] IS NULL  and [Part_name]  = '${partname}' and [Supplier] = '${vendor}' and [Model] = '${Model}' and [MO_number]  = '${MOnumber}' and [IQC_lot] = '${iqcNumber}'`
+      `Update [Control_part].[dbo].[Received_Part] SET [Status] = 'KitupCR'  ,[DateTime_KitupCR] = '${Time_Date_now}' ,[Remark_CR] = 'OK' , [Emp_KitupCR] = '${Emp}' where [Status] IS NULL  and [Part_name]  = '${partname}' and [Supplier] = '${vendor}' and [Model] = '${Model}' and [MO_number]  = '${MOnumber}' and [IQC_lot] = '${iqcNumber}'`
     );
     console.log(result4);
     res.json({

@@ -54,6 +54,7 @@ class Profile extends Component {
       empLines: [], // State to hold dropdown options from the database
       Linestxt: [], // Assuming this already contains  line" data
       empLineData: [], // Array to store EMP line and line values
+      Emp:[]
     };
     // Create refs for all input fields
     this.inputRefs = [];
@@ -330,7 +331,8 @@ class Profile extends Component {
     } catch {}
   };
   renderDataEntries = () => {
-    const { selectedItems, Raw_Dat, dataEntries2, empLineData,Linestxt } = this.state;
+    const { selectedItems, Raw_Dat, dataEntries2, empLineData, Linestxt } =
+      this.state;
 
     const entriesToRender = selectedItems.map((id) => {
       return Raw_Dat.find((item) => item.ID === id);
@@ -537,7 +539,6 @@ class Profile extends Component {
                       type="text"
                       innerRef={this.inputRefs[index].Emptag} // Ref for the second input"
                       style={EmpTagStyle}
-                   
                       onChange={(e) => this.handleEmpLineChange(index, e)}
                       onKeyDown={(event) => {
                         if (event.key === "Enter") {
@@ -851,7 +852,7 @@ class Profile extends Component {
     }
   };
   handleClick_els = async () => {
-    const { inputValues, dataEntries2 ,empLineData,Linestxt } = this.state;
+    const { inputValues, dataEntries2, empLineData, Linestxt } = this.state;
     // Collect data from the input fields
     const collectedData = dataEntries2.map((entry, index) => ({
       ...entry,
@@ -872,9 +873,10 @@ class Profile extends Component {
         // const splittedMoNumber = item.moNumber.split("-"); // Modify the delimiter as needed
         console.log(item);
         //Update ESL Tag
+        console.log(item.Rack_number);
         const response = await httpClient.patch(
           // Ensure "patch" is lowercase
-          `${server.COMPONENT_URL}/esl_addItem`, // URL
+          `${server.ISUUEPART_URL}/esl_addItem`, // URL
           {
             itemId: item.Rack_number, // Access Rack_number from each item
             properties: {
@@ -894,13 +896,25 @@ class Profile extends Component {
             },
           }
         );
-     
-      
-        // // Insert data
-        // const response_insert = await httpClient.get(
-        //   `${server.ISUUEPART_URL}/insert/${item.Model}/${item.Vendor}/${item.Part_name}/${item.Part_number}/${item.Mold}/${item.MO_number}/${item.IQC_number}/${item.QTY}/${item.empLine}/${item.line}/${item.L_part}/${item.countertxt}/${item.rackNumber}`
-        // );
 
+        // Insert data with URL-encoded parameters
+        const response_insert = await httpClient.get(
+          `${server.ISUUEPART_URL}/insert/${encodeURIComponent(
+            item.Model
+          )}/${encodeURIComponent(item.Vendor)}/${encodeURIComponent(
+            item.Part_name
+          )}/${encodeURIComponent(item.Part_number)}/${encodeURIComponent(
+            item.Mold
+          )}/${encodeURIComponent(item.Mo_number)}/${encodeURIComponent(
+            item.IQC_number
+          )}/${encodeURIComponent(item.QTY)}/${encodeURIComponent(
+            item.empLine
+          )}/${encodeURIComponent(item.line)}/${encodeURIComponent(
+            item.L_part
+          )}/${encodeURIComponent(item.countertxt)}/${encodeURIComponent(
+            item.Rack_number
+          )}/${this.state.Emp}`
+        );
         // console.log(response_insert);
 
         console.log(
@@ -908,6 +922,7 @@ class Profile extends Component {
           response.data
         );
         this.clearInput();
+        window.location.reload();
         // Define the action to take when the button is clicked
         Swal.fire({
           icon: "success",
@@ -1015,6 +1030,30 @@ class Profile extends Component {
                     >
                       Please input the data for the issue part .
                       (กรุณากรอกข้อมูลที่ต้องการจ่ายให้ถูกต้อง)
+
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        {" "}
+                        {/* Center the input */}
+                        <Input
+                          className="form-control-alternative"
+                          placeholder=" Emp"
+                          type="text"
+                          value={this.state.Emp} // Set the input value from state
+                          onChange={(e) =>
+                            this.setState({ Emp: e.target.value.toUpperCase() })
+                          } // Update state on change
+                          style={{
+                            fontSize: "20px",
+                            width: "300px",
+                            textTransform: "uppercase",
+                            textAlign: "center",
+                            color: "green",
+                          }} // Adjust width as needed
+                        />
+                      </div>
+
                       <div className="mt-5 py-5 border-top text-center">
                         <Row className="justify-content-center">
                           <Col lg="9"></Col>

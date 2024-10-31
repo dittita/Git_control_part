@@ -54,6 +54,7 @@ class Profile extends Component {
       Raw_Dat: [], // Will store the processed raw data for the table
       report: null,
       isDisable: true,
+      Emp: "",
     };
   }
 
@@ -239,9 +240,8 @@ class Profile extends Component {
     }
   };
   // Method to handle delete action
-  handleDelete = async (ID,QTY) => {
-   
-    if(QTY === "" || QTY === null){
+  handleDelete = async (ID, QTY) => {
+    if (QTY === "" || QTY === null) {
       try {
         // Send a DELETE request to your backend
         await httpClient.delete(
@@ -256,12 +256,11 @@ class Profile extends Component {
           text: "Ok, Got it!",
           confirmButtonText: "Close",
         });
-      
       } catch (error) {
         console.error("Error deleting data:", error);
         alert(`Error deleting data: ${error.message}`);
       }
-    }else{
+    } else {
       Swal.fire({
         title: "Error!",
         icon: "error",
@@ -269,18 +268,17 @@ class Profile extends Component {
         confirmButtonText: "Close",
       });
     }
- 
   };
 
   // Render method to display the table
   renderTable = () => {
     const { Raw_Dat } = this.state;
-  
+
     // Check if Raw_Dat contains data
     if (Raw_Dat.length === 0) {
       return <p>No data available</p>;
     }
-  
+
     return (
       <div className="content">
         <div className="container-fluid">
@@ -303,37 +301,126 @@ class Profile extends Component {
                 >
                   <thead>
                     <tr align="center">
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, left: 0, backgroundColor: "#fff", zIndex: 3 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          left: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 3,
+                        }}
+                      >
                         Actions
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         ESL_number
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Part_number
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Model
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Mold
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Part_name
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Vendor
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Updater
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         Rack_number
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         QTY
                       </th>
-                      <th style={{ ...styles.headerCell, position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 2 }}>
+                      <th
+                        style={{
+                          ...styles.headerCell,
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 2,
+                        }}
+                      >
                         ID
                       </th>
                     </tr>
@@ -341,7 +428,15 @@ class Profile extends Component {
                   <tbody>
                     {Raw_Dat.map((item, index) => (
                       <tr key={index}>
-                        <td style={{ ...styles.cell, position: "sticky", left: 0, backgroundColor: "#f8f9fa", zIndex: 1 }}>
+                        <td
+                          style={{
+                            ...styles.cell,
+                            position: "sticky",
+                            left: 0,
+                            backgroundColor: "#f8f9fa",
+                            zIndex: 1,
+                          }}
+                        >
                           <button
                             className="btn btn-danger"
                             onClick={() => this.handleDelete(item.ID, item.QTY)}
@@ -370,7 +465,6 @@ class Profile extends Component {
       </div>
     );
   };
-  
 
   formatDate = (date) => {
     const year = date.getFullYear();
@@ -400,8 +494,9 @@ class Profile extends Component {
           timenow,
           scannedValue,
           limit,
+          Emp,
         } = this.state;
-  
+
         // const data = {
         //   ESL_barcode: scannedValue, // Ensure this is set
         //   Part_number: selectedpart_numbers,
@@ -413,7 +508,7 @@ class Profile extends Component {
         //   Updater: "T7436",
         //   Timestamp: timenow, // Ensure this is correctly formatted
         // };
-      
+
         try {
           for (let i = 1; i <= limit; i++) {
             const data = {
@@ -424,16 +519,16 @@ class Profile extends Component {
               Vendor: selectevendor,
               Mold: selectemold,
               Rack_number: rackNumber, // Check the correct case here
-              Updater: "T7436", // user
+              Updater: Emp, // user
               Timestamp: timenow, // Ensure this is correctly formatted
               Number_limit: i,
             };
-  
+
             const response = await httpClient.post(
               server.MASTER_COMPONENT_URL + `/insert-data`,
               data
             );
-  
+
             console.log("Response:", response.data); // Log the response from the server
             Swal.fire({
               icon: "success",
@@ -441,7 +536,7 @@ class Profile extends Component {
               text: "Ok, Got it!",
               confirmButtonText: "Close",
             });
-            
+
             // alert();
           }
           // Clear input fields
@@ -450,7 +545,6 @@ class Profile extends Component {
         } catch (error) {
           console.error("Error inserting data:", error);
           if (error.response && error.response.status === 500) {
-            
             Swal.fire({
               title: "Error!",
               icon: "error",
@@ -458,10 +552,9 @@ class Profile extends Component {
               confirmButtonText: "Close",
             });
           } else if (error.response) {
-           
             Swal.fire({
               title: "Error!",
-              icon:  `Error inserting data: ${error.response.status} - ${error.response.statusText}`,
+              icon: `Error inserting data: ${error.response.status} - ${error.response.statusText}`,
               text: "Ok, Got it!",
               confirmButtonText: "Close",
             });
@@ -472,9 +565,9 @@ class Profile extends Component {
               text: "Ok, Got it!",
               confirmButtonText: "Close",
             });
-            
           }
-        }  try {
+        }
+        try {
           // const splittedModel = selectedModel.split("-"); // Modify the delimiter as needed
           const response = await httpClient.patch(
             // Ensure "patch" is lowercase
@@ -496,9 +589,8 @@ class Profile extends Component {
                 "Content-Type": "application/json", // Ensure content type is set to JSON
               },
             }
-            
           );
-          console.log("API1"+response);
+          console.log("API1" + response);
           console.log(`PATCH response for item ${rackNumber}:`, response.data);
         } catch (error) {
           console.error(
@@ -506,13 +598,12 @@ class Profile extends Component {
             error
           );
         }
-  
       });
     } else {
-      alert("Invalid input. The format should be a letter followed by two digits (1-3).");
-      
+      alert(
+        "Invalid input. The format should be a letter followed by two digits (1-3)."
+      );
     }
-   
   };
 
   // Handle input change and convert to uppercase
@@ -538,6 +629,7 @@ class Profile extends Component {
       molds,
       selectemold,
       // rackNumber,
+      Emp,
     } = this.state;
 
     return (
@@ -597,6 +689,28 @@ class Profile extends Component {
                     >
                       <i className="ni location_pin mr-2" />
                       Please input master rack number .
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        {" "}
+                        {/* Center the input */}
+                        <Input
+                          className="form-control-alternative"
+                          placeholder=" Emp"
+                          type="text"
+                          value={this.state.Emp} // Set the input value from state
+                          onChange={(e) =>
+                            this.setState({ Emp: e.target.value.toUpperCase() })
+                          } // Update state on change
+                          style={{
+                            fontSize: "20px",
+                            width: "300px",
+                            textTransform: "uppercase",
+                            textAlign: "center",
+                            color: "green",
+                          }} // Adjust width as needed
+                        />
+                      </div>
                     </div>
 
                     {/* ESL Tag Input */}
