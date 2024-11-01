@@ -42,13 +42,13 @@ export const UPLOAD_PHOTO_FAIL_MESSAGE =
 
 
 
-export const apiUrl = "http://localhost:2032/"; //localhost port 2010
-export const Url = "http://localhost:3000/"; //Port frontend
+// export const apiUrl = "http://localhost:2032/"; //localhost port 2010
+// export const Url = "http://localhost:3000/"; //Port frontend
 // export const apiUrl_python = "http://192.168.101.120:2028/"; //deploy บางปะอิน 
 
 // SPD 
-// export const apiUrl = "http://192.168.101.67:2032/"; //deploy บางปะอิน 
-// export const Url = "http://192.168.101.67:2031/"; //deploy บางปะอิน 
+export const apiUrl = "http://192.168.101.67:2032/"; //deploy บางปะอิน 
+export const Url = "http://192.168.101.67:2031/"; //deploy บางปะอิน 
 // export const apiUrl_python = "http://192.168.101.120:2028/"; //deploy บางปะอิน 
 
 //nmb 

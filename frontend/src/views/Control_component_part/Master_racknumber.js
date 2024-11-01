@@ -576,12 +576,12 @@ class Profile extends Component {
               barcode: scannedValue, // Access Rack_number from each item
               properties: {
                 barcode: scannedValue,
-                // MO_DL: selectedModel,
-                // Part: selectedpartname,
-                // PART_NO: selectedpart_numbers,
-                // Vendor: selectevendor,
+                MO_DL: selectedModel,
+                Part: selectedpartname,
+                PART_NO: selectedpart_numbers,
+                Vendor: selectevendor,
                 itemId: rackNumber,
-                // ITEMIPF: "Tag2",
+                ITEMIPF: "Tag2",
               },
             },
             {

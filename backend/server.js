@@ -8,16 +8,16 @@ const { log } = require("console");
 
 app.use(cors());
 
-const corsOptions = {
-  origin: 'http://localhost:3000', 
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
-
 // const corsOptions = {
-//   origin: 'http://192.168.101.67:2031', 
+//   origin: 'http://localhost:3000', 
 //   optionsSuccessStatus: 200,
 // };
+app.use(cors(corsOptions));
+
+const corsOptions = {
+  origin: 'http://192.168.101.67:2031', 
+  optionsSuccessStatus: 200,
+};
 app.use(cors(corsOptions));
 
 

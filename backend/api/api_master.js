@@ -10,14 +10,7 @@ router.patch("/esl_linkESL", async (req, res) => {
     const fs = require("fs");
     const https = require("https");
     const http = require("http");
-    //const { ID } = req.params;
-    //let { ID } = req.body
-    // <<<<
-    //     var eslCode = "N4074190701913284"
-    //     var itemid = "A12"
-    // =======
-    // >>>>>>> upstream/main
-
+ 
     var eslCode = req.body.eslCode;
     var itemid = req.body.itemid;
 
@@ -85,13 +78,16 @@ router.patch("/esl_linkESL", async (req, res) => {
       api_result: constants.OK,
     });
   } catch (error) {
-    // console.log(error);
-    // res.json({
-    //   error,
-    //   api_result: constants.NOK,
-    // });
+    console.log(error);
+    res.json({
+      error,
+      api_result: constants.NOK,
+    });
   }
 });
+
+
+
 router.get("/Model", async (req, res) => {
   try {
     let result = await user.sequelize.query(
